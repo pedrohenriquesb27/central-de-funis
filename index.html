@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-[#F5F3EF]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Central de Funis | Prosperus Inteligência Financeira</title>
+  
+  <!-- Favicon / Brand Symbol -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%20100%20100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23062E20%22/><text y=%2268%22 x=%2250%22 font-family=%22serif%22 font-size=%2260%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23C59B27%22>P</text></svg>">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Fontes Google (Plus Jakarta Sans & Playfair Display) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Supabase JS Client & Configuração Central -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseConfig.js"></script>
+
+  <!-- Tailwind Configuration para Identidade Visual Prosperus -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              dark: '#062E20',
+              darkHover: '#042016',
+              gold: '#C59B27',
+              goldHover: '#a37f1d',
+              goldLight: '#FBF7EE',
+              bgLight: '#F5F3EF',
+              textDark: '#0A1910',
+              cardBg: '#FFFFFF',
+              borderLight: '#E8E5DF'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #0A1910;
+      background-color: #F5F3EF;
+    }
+    
+    /* Scrollbars elegantes */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #F1EFEA;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #C59B27;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #a37f1d;
+    }
+
+    /* Animações suaves */
+    .fade-in {
+      animation: fadeIn 0.25s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col antialiased bg-[#F5F3EF] selection:bg-[#C59B27] selection:text-white">
+
+  <!-- ========================================================================= -->
+  <!-- 1. TELA DE LOGIN (PROTEÇÃO POR SENHA 'admin123')                          -->
+  <!-- ========================================================================= -->
+  <div id="loginSection" class="fixed inset-0 z-50 flex items-center justify-center bg-[#062E20] p-4 transition-all duration-300">
+    
+    <!-- Padrão geométrico sutil no fundo -->
+    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#C59B27_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+
+    <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-[#C59B27]/40 relative overflow-hidden text-center z-10 fade-in">
+      
+      <!-- Monograma Prosperus -->
+      <div class="w-16 h-16 bg-[#062E20] rounded-2xl mx-auto flex items-center justify-center mb-4 border border-[#C59B27]/40 shadow-lg">
+        <span class="font-serif text-3xl font-bold text-[#C59B27]">P</span>
+      </div>
+
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C59B27]/10 text-[#8c6b12] text-xs font-bold uppercase tracking-wider mb-2 border border-[#C59B27]/30">
+        <i class="fa-solid fa-network-wired text-[10px]"></i>
+        <span>Painel Unificado</span>
+      </div>
+
+      <h2 class="text-2xl font-extrabold text-[#062E20] tracking-tight">Central de Funis</h2>
+      <p class="text-xs text-gray-500 mt-1 mb-6">Prosperus Inteligência Financeira • Gestão Multi-Funil</p>
+
+      <!-- Formulário de Autenticação -->
+      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4 text-left">
+        <div>
+          <label class="block text-xs font-bold text-[#062E20] uppercase tracking-wider mb-2">
+            <i class="fa-solid fa-lock text-[#C59B27] mr-1"></i> Senha de Acesso Admin
+          </label>
+          <div class="relative">
+            <input type="password" id="passwordInput" placeholder="Digite sua senha..." required autofocus
+              class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#C59B27] focus:border-[#C59B27] text-sm outline-none transition text-[#062E20] font-medium pr-10">
+            <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#062E20] transition">
+              <i id="eyeIcon" class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+          <p id="loginError" class="hidden text-xs text-red-600 font-semibold mt-2 text-center bg-red-50 py-1.5 rounded-lg border border-red-200">
+            <i class="fa-solid fa-circle-exclamation mr-1"></i> Senha incorreta. Tente 'admin123'.
+          </p>
+        </div>
+
+        <button type="submit" 
+          class="w-full py-3.5 px-6 bg-[#062E20] hover:bg-[#042016] text-[#C59B27] font-bold rounded-xl shadow-md hover:shadow-lg transition duration-200 flex items-center justify-center gap-2 border border-[#C59B27]/30">
+          <span>Acessar Central de Funis</span>
+          <i class="fa-solid fa-arrow-right text-sm"></i>
+        </button>
+      </form>
+
+      <div class="mt-6 pt-4 border-t border-gray-100 text-xs text-gray-400 flex items-center justify-center gap-1.5">
+        <i class="fa-solid fa-shield-halved text-[#C59B27]"></i>
+        <span>Senha padrão inicial: <strong class="text-[#062E20]">admin123</strong></span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 2. DASHBOARD PRINCIPAL (CENTRAL DE FUNIS)                                  -->
+  <!-- ========================================================================= -->
+  <div id="dashboardSection" class="hidden flex-1 flex flex-col min-h-screen">
+    
+    <!-- TOP NAVBAR -->
+    <header class="bg-[#062E20] text-white border-b border-[#C59B27]/30 sticky top-0 z-30 shadow-md">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+        
+        <!-- Brand & Logotipo -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center border border-[#C59B27]/40 shadow-inner">
+            <span class="font-serif text-xl font-bold text-[#C59B27]">P</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-lg text-white tracking-wide block leading-none">PROSPERUS</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#C59B27]/20 text-[#C59B27] border border-[#C59B27]/30 uppercase tracking-wider">Central de Funis</span>
+            </div>
+            <span class="text-[11px] text-gray-300 tracking-wider">Gestão Multi-Funil & Conversão de Leads</span>
+          </div>
+        </div>
+
+        <!-- Ações do Topo -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          
+          <!-- Indicador de Status Online -->
+          <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-semibold">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+            </span>
+            <span id="syncStatusText">Supabase Conectado</span>
+          </div>
+
+          <!-- Botão Ajuda / SQL Setup -->
+          <button onclick="openSqlModal()" title="Instruções da Tabela Supabase"
+            class="px-3 py-1.5 bg-white/5 hover:bg-white/15 text-gray-300 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 border border-white/10">
+            <i class="fa-solid fa-database text-[#C59B27]"></i>
+            <span class="hidden lg:inline">SQL Schema</span>
+          </button>
+
+          <!-- Botão Atualizar Dados -->
+          <button onclick="loadDashboardData()" title="Atualizar dados agora"
+            class="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-semibold transition flex items-center gap-2 border border-white/10">
+            <i class="fa-solid fa-rotate-right" id="refreshSpinner"></i>
+            <span class="hidden sm:inline">Atualizar</span>
+          </button>
+
+          <!-- Botão Sair / Logout -->
+          <button onclick="handleLogout()" title="Sair do Painel"
+            class="px-3.5 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 border border-red-500/30">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Sair</span>
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      
+      <!-- HERO / BANNER CENTRAL -->
+      <div class="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#C59B27]/15 text-[#8c6b12] border border-[#C59B27]/30 uppercase">
+              Visão Executiva
+            </span>
+            <span class="text-xs text-gray-400" id="lastUpdatedTime">• Atualizado recentemente</span>
+          </div>
+          <h1 class="text-2xl font-extrabold text-[#062E20] tracking-tight">Central de Funis de Marketing</h1>
+          <p class="text-xs sm:text-sm text-gray-500 mt-1">
+            Painel unificado para monitorar leads, avanço de etapas de checkout e vendas aprovadas em múltiplos funis.
+          </p>
+        </div>
+
+        <!-- Botões de Ações Rápidas (Exportação / WhatsApp) -->
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button onclick="copyFilteredContacts()" 
+            class="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-2">
+            <i class="fa-brands fa-whatsapp text-sm"></i>
+            <span id="copyBtnText">Copiar Contatos (WhatsApp)</span>
+          </button>
+
+          <button onclick="exportToCSV()" 
+            class="px-4 py-2.5 bg-[#062E20] hover:bg-[#042016] text-[#C59B27] text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-2 border border-[#C59B27]/40">
+            <i class="fa-solid fa-file-csv text-sm"></i>
+            <span>Exportar CSV / Excel</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- 3. SELETOR DE FUNIS NO TOPO (ABAS PRINCIPAIS)                             -->
+      <!-- ========================================================================= -->
+      <div class="bg-white p-2.5 rounded-2xl border border-gray-200/80 shadow-sm">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-gray-400 px-3 pt-1 pb-2 flex items-center justify-between">
+          <span class="flex items-center gap-1.5">
+            <i class="fa-solid fa-filter text-[#C59B27]"></i>
+            <span>Filtrar por Funil de Origem:</span>
+          </span>
+          <span class="text-[10px] text-gray-400 lowercase font-normal">alternância dinâmica</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2" id="funnelTabsContainer">
+          
+          <!-- Aba 1: Visão Geral (Todos os Funis) -->
+          <button onclick="setFunnelTab('all')" id="funnel-tab-all"
+            class="funnel-btn flex items-center justify-between p-3.5 rounded-xl border transition text-left bg-[#062E20] text-[#C59B27] border-[#062E20] shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-sm">
+                <i class="fa-solid fa-layer-group"></i>
+              </div>
+              <div>
+                <p class="text-xs font-extrabold">Visão Geral</p>
+                <p class="text-[11px] text-gray-300">Todos os Funis</p>
+              </div>
+            </div>
+            <span id="funnelCount-all" class="px-2.5 py-1 rounded-full text-xs font-black bg-white/20 text-white">0</span>
+          </button>
+
+          <!-- Aba 2: Funil 1 (Quiz Prosperus) -->
+          <button onclick="setFunnelTab('quiz_prosperus')" id="funnel-tab-quiz_prosperus"
+            class="funnel-btn flex items-center justify-between p-3.5 rounded-xl border border-gray-200 hover:border-gray-300 bg-gray-50/70 hover:bg-gray-100/60 text-gray-700 transition text-left">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-700 flex items-center justify-center text-sm">
+                <i class="fa-solid fa-clipboard-question"></i>
+              </div>
+              <div>
+                <p class="text-xs font-extrabold">Funil 1</p>
+                <p class="text-[11px] text-gray-500">Quiz Prosperus</p>
+              </div>
+            </div>
+            <span id="funnelCount-quiz_prosperus" class="px-2.5 py-1 rounded-full text-xs font-black bg-gray-200 text-gray-700">0</span>
+          </button>
+
+          <!-- Aba 3: Funil 2 (Informativo / Venda) -->
+          <button onclick="setFunnelTab('informativo_venda')" id="funnel-tab-informativo_venda"
+            class="funnel-btn flex items-center justify-between p-3.5 rounded-xl border border-gray-200 hover:border-gray-300 bg-gray-50/70 hover:bg-gray-100/60 text-gray-700 transition text-left">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-amber-500/10 text-amber-700 flex items-center justify-center text-sm">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+              </div>
+              <div>
+                <p class="text-xs font-extrabold">Funil 2</p>
+                <p class="text-[11px] text-gray-500">Informativo / Venda</p>
+              </div>
+            </div>
+            <span id="funnelCount-informativo_venda" class="px-2.5 py-1 rounded-full text-xs font-black bg-gray-200 text-gray-700">0</span>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- 4. CARDS DE MÉTRICAS DINÂMICOS                                           -->
+      <!-- ========================================================================= -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- Card 1: Total de Leads -->
+        <div class="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-sm flex items-center justify-between transition hover:shadow-md">
+          <div>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total de Leads</p>
+            <h3 id="metricTotalLeads" class="text-3xl font-extrabold text-[#062E20] mt-1">0</h3>
+            <p class="text-[11px] text-gray-500 font-semibold mt-1 flex items-center gap-1">
+              <i class="fa-solid fa-users text-[#C59B27]"></i>
+              <span id="metricTotalSubtitle">Leads Cadastrados</span>
+            </p>
+          </div>
+          <div class="w-12 h-12 bg-[#062E20]/5 rounded-2xl flex items-center justify-center text-[#062E20] text-xl border border-[#062E20]/10">
+            <i class="fa-solid fa-users"></i>
+          </div>
+        </div>
+
+        <!-- Card 2: Formulário/Quiz Preenchido -->
+        <div class="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-sm flex items-center justify-between transition hover:shadow-md">
+          <div>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Formulário Preenchido</p>
+            <h3 id="metricPreencheu" class="text-3xl font-extrabold text-blue-600 mt-1">0</h3>
+            <p class="text-[11px] text-blue-600 font-semibold mt-1 flex items-center gap-1">
+              <i class="fa-regular fa-clipboard"></i>
+              <span id="metricPreencheuRate">100% dos leads</span>
+            </p>
+          </div>
+          <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 text-xl border border-blue-100">
+            <i class="fa-regular fa-clipboard"></i>
+          </div>
+        </div>
+
+        <!-- Card 3: Iniciou Checkout -->
+        <div class="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-sm flex items-center justify-between transition hover:shadow-md">
+          <div>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Iniciou Checkout</p>
+            <h3 id="metricCheckout" class="text-3xl font-extrabold text-amber-600 mt-1">0</h3>
+            <p class="text-[11px] text-amber-600 font-semibold mt-1 flex items-center gap-1">
+              <i class="fa-solid fa-cart-shopping"></i>
+              <span id="metricCheckoutRate">0% conversão</span>
+            </p>
+          </div>
+          <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 text-xl border border-amber-100">
+            <i class="fa-solid fa-cart-shopping"></i>
+          </div>
+        </div>
+
+        <!-- Card 4: Vendas Aprovadas -->
+        <div class="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-sm flex items-center justify-between transition hover:shadow-md">
+          <div>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Vendas Aprovadas</p>
+            <h3 id="metricComprou" class="text-3xl font-extrabold text-emerald-600 mt-1">0</h3>
+            <p class="text-[11px] text-emerald-600 font-semibold mt-1 flex items-center gap-1">
+              <i class="fa-solid fa-sack-dollar"></i>
+              <span id="metricTotalReceita">R$ 0,00 faturado</span>
+            </p>
+          </div>
+          <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 text-xl border border-emerald-100">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- 5. SUB-ABAS DE STATUS DE CONVERSÃO                                        -->
+      <!-- ========================================================================= -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1">
+        
+        <button onclick="setStatusTab('ALL')" id="status-tab-ALL" 
+          class="status-btn px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-[#062E20] text-[#C59B27] shadow-sm whitespace-nowrap">
+          <i class="fa-solid fa-layer-group"></i>
+          <span>Todos</span>
+          <span id="statusBadge-ALL" class="px-2 py-0.5 rounded-full text-[10px] bg-white/20 text-white font-black">0</span>
+        </button>
+
+        <button onclick="setStatusTab('FORMULARIO')" id="status-tab-FORMULARIO" 
+          class="status-btn px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-white text-gray-600 hover:bg-gray-50 border border-gray-200 whitespace-nowrap">
+          <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+          <span>Formulário Preenchido</span>
+          <span id="statusBadge-FORMULARIO" class="px-2 py-0.5 rounded-full text-[10px] bg-blue-100 text-blue-800 font-black">0</span>
+        </button>
+
+        <button onclick="setStatusTab('CHECKOUT')" id="status-tab-CHECKOUT" 
+          class="status-btn px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-white text-gray-600 hover:bg-gray-50 border border-gray-200 whitespace-nowrap">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+          <span>Iniciou Checkout</span>
+          <span id="statusBadge-CHECKOUT" class="px-2 py-0.5 rounded-full text-[10px] bg-amber-100 text-amber-800 font-black">0</span>
+        </button>
+
+        <button onclick="setStatusTab('COMPROU')" id="status-tab-COMPROU" 
+          class="status-btn px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-white text-gray-600 hover:bg-gray-50 border border-gray-200 whitespace-nowrap">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+          <span>Venda Aprovada (Comprou)</span>
+          <span id="statusBadge-COMPROU" class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-black">0</span>
+        </button>
+
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- 6. BARRA DE PESQUISA EM TEMPO REAL & FILTROS                             -->
+      <!-- ========================================================================= -->
+      <div class="bg-white p-4 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+        
+        <!-- Campo Busca em tempo real -->
+        <div class="relative w-full md:w-96">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+          <input type="text" id="searchInput" oninput="handleFilterChange()" 
+            placeholder="Buscar por nome, telefone, e-mail, CPF ou ID do funil..."
+            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 rounded-xl border border-gray-200 text-sm text-[#062E20] focus:ring-2 focus:ring-[#C59B27] focus:bg-white outline-none transition font-medium">
+        </div>
+
+        <!-- Filtros auxiliares (Ordenação e Faixa) -->
+        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
+          
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <label class="text-xs font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Ordenar:</label>
+            <select id="sortOrder" onchange="handleFilterChange()"
+              class="px-3.5 py-2.5 bg-gray-50 rounded-xl border border-gray-200 text-xs text-[#062E20] font-semibold focus:ring-2 focus:ring-[#C59B27] outline-none transition cursor-pointer">
+              <option value="recent">Mais Recentes Primeiro</option>
+              <option value="oldest">Mais Antigos Primeiro</option>
+              <option value="name">Ordem Alfabética (A-Z)</option>
+            </select>
+          </div>
+
+          <!-- Totalizador de visualização -->
+          <div class="px-3 py-2 bg-gray-100 rounded-xl text-xs font-bold text-gray-600">
+            Exibindo: <span id="leadsCountText" class="text-[#062E20]">0 leads</span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- 7. TABELA LIMPA E RESPONSIVA DE LEADS                                    -->
+      <!-- ========================================================================= -->
+      <div class="bg-white rounded-2xl border border-gray-200/80 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-[#062E20] text-white text-[11px] font-bold uppercase tracking-wider">
+                <th class="py-3.5 px-4">Data / Hora</th>
+                <th class="py-3.5 px-4">Funil de Origem</th>
+                <th class="py-3.5 px-4">Nome & Documento</th>
+                <th class="py-3.5 px-4">WhatsApp & E-mail</th>
+                <th class="py-3.5 px-4">Status de Conversão</th>
+                <th class="py-3.5 px-4 text-center">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="leadsTableBody" class="divide-y divide-gray-100 text-sm">
+              <!-- Linhas geradas dinamicamente via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Estado Vazio / Sem Resultados -->
+        <div id="emptyState" class="hidden py-16 px-4 text-center">
+          <div class="w-16 h-16 bg-gray-100 rounded-2xl mx-auto flex items-center justify-center text-gray-400 text-2xl mb-3">
+            <i class="fa-solid fa-inbox"></i>
+          </div>
+          <h4 class="text-base font-bold text-gray-700">Nenhum lead encontrado</h4>
+          <p class="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
+            Não há registros correspondentes aos filtros selecionados. Tente alterar o funil, a sub-aba de status ou a busca.
+          </p>
+          <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-[#062E20] text-[#C59B27] rounded-xl text-xs font-bold hover:bg-[#042016] transition">
+            Limpar Filtros de Busca
+          </button>
+        </div>
+
+        <!-- Estado de Carregamento (Skeleton / Spinner) -->
+        <div id="loadingState" class="hidden py-16 px-4 text-center">
+          <i class="fa-solid fa-circle-notch fa-spin text-3xl text-[#C59B27] mb-3"></i>
+          <p class="text-sm font-bold text-[#062E20]">Carregando leads do Supabase...</p>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="mt-auto py-4 border-t border-gray-200 bg-white/50 text-center text-xs text-gray-400">
+      Prosperus Inteligência Financeira • Central de Funis v2.0 • Conectado à tabela <code class="font-mono text-[#062E20] font-bold">quiz_leads</code>
+    </footer>
+
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 8. MODAL DE DETALHES COMPLETOS DO LEAD                                    -->
+  <!-- ========================================================================= -->
+  <div id="detailsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm fade-in">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-gray-200 overflow-hidden">
+      
+      <!-- Cabeçalho do Modal -->
+      <div class="bg-[#062E20] text-white p-5 flex items-center justify-between border-b border-[#C59B27]/30">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#C59B27] font-serif text-lg font-bold border border-[#C59B27]/30">
+            P
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <span id="modalLeadNome">Nome do Lead</span>
+              <span id="modalLeadBadgeFunil" class="px-2 py-0.5 rounded-full text-[10px] font-bold">Funil</span>
+            </h3>
+            <p class="text-xs text-gray-300">ID: <span id="modalLeadId" class="font-mono font-bold">-</span> • Criado em <span id="modalLeadCreatedAt">-</span></p>
+          </div>
+        </div>
+        <button onclick="closeDetailsModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Corpo com Detalhes (Scrollável) -->
+      <div class="p-6 space-y-6 overflow-y-auto custom-scrollbar flex-1">
+        
+        <!-- Bloco 1: Contato e Identificação -->
+        <div>
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-1.5">
+            <i class="fa-solid fa-address-card text-[#C59B27]"></i>
+            <span>Contato & Identificação</span>
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-200/80">
+            <div>
+              <p class="text-[11px] font-bold text-gray-400 uppercase">WhatsApp / Telefone</p>
+              <div class="flex items-center gap-2 mt-0.5">
+                <span id="modalLeadPhone" class="font-bold text-sm text-[#062E20]">-</span>
+                <a id="modalLeadWaBtn" href="#" target="_blank" class="px-2 py-1 rounded bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition flex items-center gap-1">
+                  <i class="fa-brands fa-whatsapp"></i> Conversar
+                </a>
+              </div>
+            </div>
+            <div>
+              <p class="text-[11px] font-bold text-gray-400 uppercase">Documento / E-mail</p>
+              <p id="modalLeadDocEmail" class="font-bold text-sm text-[#062E20] mt-0.5 font-mono">-</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco 2: Gestão do Funil & Status (Editável) -->
+        <div>
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-1.5">
+            <i class="fa-solid fa-pen-to-square text-[#C59B27]"></i>
+            <span>Etapa do Funil & Conversão (Atualização Rápida)</span>
+          </h4>
+          <div class="bg-amber-50/50 p-4 rounded-2xl border border-amber-200/60 space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Status de Conversão</label>
+                <select id="modalEditStatus" class="w-full px-3 py-2 bg-white rounded-xl border border-gray-300 text-xs font-bold text-[#062E20] outline-none focus:ring-2 focus:ring-[#C59B27]">
+                  <option value="Preencheu Formulário">Preencheu Formulário</option>
+                  <option value="Iniciou Checkout">Iniciou Checkout</option>
+                  <option value="Comprou">Comprou (Venda Aprovada)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Funil de Origem (funil_id)</label>
+                <select id="modalEditFunnel" class="w-full px-3 py-2 bg-white rounded-xl border border-gray-300 text-xs font-bold text-[#062E20] outline-none focus:ring-2 focus:ring-[#C59B27]">
+                  <option value="quiz_prosperus">Funil 1: Quiz Prosperus</option>
+                  <option value="informativo_venda">Funil 2: Informativo / Venda</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div>
+                <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Valor Pago (R$ se houver)</label>
+                <input type="text" id="modalEditValor" placeholder="Ex: 97.00" 
+                  class="w-full px-3 py-2 bg-white rounded-xl border border-gray-300 text-xs font-bold text-[#062E20] outline-none focus:ring-2 focus:ring-[#C59B27]">
+              </div>
+              <div class="flex items-end">
+                <button onclick="saveLeadChanges()" id="btnSaveLead"
+                  class="w-full py-2 px-4 bg-[#062E20] hover:bg-[#042016] text-[#C59B27] rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 border border-[#C59B27]/40 shadow-sm">
+                  <i class="fa-solid fa-floppy-disk"></i>
+                  <span>Salvar Alterações</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco 3: Respostas do Quiz / Diagnóstico (se disponível) -->
+        <div>
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-1.5">
+            <i class="fa-solid fa-list-check text-[#C59B27]"></i>
+            <span>Diagnóstico Financeiro & Campos Extras</span>
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs" id="modalExtraFieldsContainer">
+            <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
+              <span class="text-gray-400 block font-semibold text-[10px] uppercase">Faixa de Renda</span>
+              <span id="modalRenda" class="font-bold text-[#062E20]">-</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
+              <span class="text-gray-400 block font-semibold text-[10px] uppercase">Capacidade Mensal</span>
+              <span id="modalCapacidade" class="font-bold text-[#062E20]">-</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
+              <span class="text-gray-400 block font-semibold text-[10px] uppercase">Acompanha CPF?</span>
+              <span id="modalCpfAcomp" class="font-bold text-[#062E20]">-</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
+              <span class="text-gray-400 block font-semibold text-[10px] uppercase">Relacionamento Bancário</span>
+              <span id="modalBancos" class="font-bold text-[#062E20]">-</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Rodapé do Modal -->
+      <div class="bg-gray-50 p-4 border-t border-gray-200 flex items-center justify-between">
+        <button onclick="copySingleLeadInfo()" class="px-3.5 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-bold transition flex items-center gap-1.5">
+          <i class="fa-regular fa-copy"></i>
+          <span>Copiar Dados</span>
+        </button>
+
+        <button onclick="closeDetailsModal()" class="px-5 py-2 rounded-xl bg-gray-300 hover:bg-gray-400 text-gray-800 text-xs font-bold transition">
+          Fechar
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 9. MODAL SQL SETUP / INSTRUÇÕES PARA 'funil_id'                           -->
+  <!-- ========================================================================= -->
+  <div id="sqlModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm fade-in">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-gray-200">
+      <div class="flex items-center justify-between pb-3 border-b border-gray-200">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-[#062E20] text-[#C59B27] flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-database"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-[#062E20]">Estrutura da Tabela 'quiz_leads'</h3>
+            <p class="text-[11px] text-gray-400">Instrução SQL para suporte à coluna 'funil_id'</p>
+          </div>
+        </div>
+        <button onclick="closeSqlModal()" class="text-gray-400 hover:text-gray-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="py-4 space-y-3 text-xs text-gray-600">
+        <p>
+          A Central de Funis funciona dinamicamente conectada à tabela <code class="font-mono font-bold text-[#062E20]">quiz_leads</code>. Se a coluna <code class="font-mono font-bold text-[#062E20]">funil_id</code> ainda não tiver sido criada no seu painel Supabase, execute o comando abaixo no <strong>SQL Editor</strong> do Supabase:
+        </p>
+
+        <div class="relative bg-[#062E20] text-emerald-300 p-3.5 rounded-xl font-mono text-xs overflow-x-auto">
+          <code>ALTER TABLE quiz_leads ADD COLUMN IF NOT EXISTS funil_id TEXT DEFAULT 'quiz_prosperus';</code>
+          <button onclick="copySqlCode()" class="absolute right-2 top-2 px-2 py-1 bg-white/10 hover:bg-white/20 text-white rounded text-[10px] font-bold">
+            Copiar
+          </button>
+        </div>
+
+        <p class="text-[11px] text-gray-500">
+          * Os leads existentes que tiverem <code class="font-mono">funil_id</code> nulo são automaticamente associados ao <strong>Funil 1: Quiz Prosperus</strong>.
+        </p>
+      </div>
+
+      <div class="pt-3 border-t border-gray-200 text-right">
+        <button onclick="closeSqlModal()" class="px-4 py-2 bg-[#062E20] text-[#C59B27] rounded-xl text-xs font-bold hover:bg-[#042016]">
+          Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 10. TOAST NOTIFICATION CONTAINER                                          -->
+  <!-- ========================================================================= -->
+  <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-[#062E20] text-white px-4 py-3 rounded-2xl shadow-2xl border border-[#C59B27]/40 flex items-center gap-3">
+      <div id="toastIcon" class="w-8 h-8 rounded-xl bg-[#C59B27]/20 text-[#C59B27] flex items-center justify-center font-bold text-sm">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <div>
+        <p id="toastTitle" class="text-xs font-bold text-[#C59B27]">Sucesso</p>
+        <p id="toastMessage" class="text-xs text-gray-200">Ação executada com sucesso.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 11. SCRIPT DE CONTROLE COMPLETO                                           -->
+  <!-- ========================================================================= -->
+  <script>
+    // ESTADO GLOBAL DA APLICAÇÃO
+    let allLeads = [];
+    let currentFunnel = 'all';        // 'all', 'quiz_prosperus', 'informativo_venda'
+    let currentStatusTab = 'ALL';     // 'ALL', 'FORMULARIO', 'CHECKOUT', 'COMPROU'
+    let activeLeadForModal = null;
+
+    // 1. AUTENTICAÇÃO / LOGIN (Senha padrão: admin123)
+    function handleLogin(event) {
+      if (event) event.preventDefault();
+      const pwd = document.getElementById('passwordInput').value.trim();
+      const errEl = document.getElementById('loginError');
+
+      if (pwd === 'admin123') {
+        errEl.classList.add('hidden');
+        localStorage.setItem('prosperus_central_auth', 'true');
+        showDashboard();
+      } else {
+        errEl.classList.remove('hidden');
+        const input = document.getElementById('passwordInput');
+        input.classList.add('border-red-500', 'bg-red-50');
+        setTimeout(() => input.classList.remove('border-red-500', 'bg-red-50'), 1500);
+      }
+    }
+
+    function togglePasswordVisibility() {
+      const input = document.getElementById('passwordInput');
+      const icon = document.getElementById('eyeIcon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    }
+
+    function handleLogout() {
+      if (confirm('Deseja realmente sair da Central de Funis?')) {
+        localStorage.removeItem('prosperus_central_auth');
+        showLogin();
+      }
+    }
+
+    function showDashboard() {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('dashboardSection').classList.remove('hidden');
+      loadDashboardData();
+    }
+
+    function showLogin() {
+      document.getElementById('loginSection').classList.remove('hidden');
+      document.getElementById('dashboardSection').classList.add('hidden');
+      document.getElementById('passwordInput').value = '';
+    }
+
+    // 2. CARREGAMENTO DOS LEADS VIA SUPABASE
+    async function loadDashboardData() {
+      const spinner = document.getElementById('refreshSpinner');
+      const loadingState = document.getElementById('loadingState');
+      const emptyState = document.getElementById('emptyState');
+      
+      if (spinner) spinner.classList.add('fa-spin');
+      if (allLeads.length === 0) loadingState.classList.remove('hidden');
+
+      try {
+        const client = window.getSupabaseClient ? window.getSupabaseClient() : null;
+        if (!client) {
+          throw new Error('Supabase Client não inicializado');
+        }
+
+        // Busca todos os leads de forma resiliente
+        const { data, error } = await client
+          .from('quiz_leads')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        allLeads = (data || []).map(lead => {
+          // Normaliza o funil_id
+          const canonicalFunnel = window.normalizeFunnelId 
+            ? window.normalizeFunnelId(lead.funil_id)
+            : (lead.funil_id || 'quiz_prosperus');
+
+          return {
+            ...lead,
+            funil_id: canonicalFunnel,
+            status_lead: lead.status_lead || 'Preencheu Formulário'
+          };
+        });
+
+        // Atualiza horário
+        const now = new Date();
+        document.getElementById('lastUpdatedTime').innerText = `• Atualizado às ${now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
+        document.getElementById('syncStatusText').innerText = `Online (${allLeads.length} leads)`;
+
+        // Atualiza contadores nas abas de funil
+        updateFunnelTabCounts();
+
+        // Atualiza cards e tabela
+        applyFiltersAndRender();
+        showToast('Dados Atualizados', `${allLeads.length} leads sincronizados com o Supabase.`);
+
+      } catch (err) {
+        console.error('⚠️ Erro ao carregar leads:', err);
+        showToast('Aviso de Conexão', 'Não foi possível sincronizar com o Supabase: ' + err.message, 'warning');
+      } finally {
+        if (spinner) setTimeout(() => spinner.classList.remove('fa-spin'), 400);
+        loadingState.classList.add('hidden');
+      }
+    }
+
+    // 3. CONTADORES NAS ABAS DE FUNIL
+    function updateFunnelTabCounts() {
+      const totalAll = allLeads.length;
+      const countQuiz = allLeads.filter(l => l.funil_id === 'quiz_prosperus').length;
+      const countVenda = allLeads.filter(l => l.funil_id === 'informativo_venda').length;
+
+      document.getElementById('funnelCount-all').innerText = totalAll;
+      document.getElementById('funnelCount-quiz_prosperus').innerText = countQuiz;
+      document.getElementById('funnelCount-informativo_venda').innerText = countVenda;
+    }
+
+    // 4. ALTERNÂNCIA DE ABAS DE FUNIL
+    function setFunnelTab(funnelId) {
+      currentFunnel = funnelId;
+
+      // Atualiza estilo dos botões de abas
+      const tabs = ['all', 'quiz_prosperus', 'informativo_venda'];
+      tabs.forEach(tab => {
+        const btn = document.getElementById(`funnel-tab-${tab}`);
+        const countSpan = document.getElementById(`funnelCount-${tab}`);
+        if (!btn) return;
+
+        if (tab === funnelId) {
+          btn.className = 'funnel-btn flex items-center justify-between p-3.5 rounded-xl border transition text-left bg-[#062E20] text-[#C59B27] border-[#062E20] shadow-sm';
+          if (countSpan) countSpan.className = 'px-2.5 py-1 rounded-full text-xs font-black bg-white/20 text-white';
+        } else {
+          btn.className = 'funnel-btn flex items-center justify-between p-3.5 rounded-xl border border-gray-200 hover:border-gray-300 bg-gray-50/70 hover:bg-gray-100/60 text-gray-700 transition text-left';
+          if (countSpan) countSpan.className = 'px-2.5 py-1 rounded-full text-xs font-black bg-gray-200 text-gray-700';
+        }
+      });
+
+      applyFiltersAndRender();
+    }
+
+    // 5. ALTERNÂNCIA DE SUB-ABAS DE STATUS
+    function setStatusTab(status) {
+      currentStatusTab = status;
+
+      const subTabs = ['ALL', 'FORMULARIO', 'CHECKOUT', 'COMPROU'];
+      subTabs.forEach(s => {
+        const btn = document.getElementById(`status-tab-${s}`);
+        if (!btn) return;
+
+        if (s === status) {
+          btn.className = 'status-btn px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-[#062E20] text-[#C59B27] shadow-sm whitespace-nowrap';
+        } else {
+          btn.className = 'status-btn px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-white text-gray-600 hover:bg-gray-50 border border-gray-200 whitespace-nowrap';
+        }
+      });
+
+      applyFiltersAndRender();
+    }
+
+    // 6. FILTRAGEM E ATUALIZAÇÃO DE MÉTRICAS
+    function applyFiltersAndRender() {
+      // 1. Filtrar pelo funil selecionado
+      let funnelLeads = allLeads;
+      if (currentFunnel !== 'all') {
+        funnelLeads = allLeads.filter(l => l.funil_id === currentFunnel);
+      }
+
+      // 2. Atualizar Cards Dinâmicos do Funil Selecionado
+      updateMetricCards(funnelLeads);
+
+      // 3. Atualizar Badges das Sub-abas de Status para o funil ativo
+      updateStatusSubTabBadges(funnelLeads);
+
+      // 4. Filtrar por Sub-aba de Status
+      let filtered = funnelLeads;
+      if (currentStatusTab === 'FORMULARIO') {
+        filtered = filtered.filter(l => l.status_lead === 'Preencheu Formulário');
+      } else if (currentStatusTab === 'CHECKOUT') {
+        filtered = filtered.filter(l => l.status_lead === 'Iniciou Checkout');
+      } else if (currentStatusTab === 'COMPROU') {
+        filtered = filtered.filter(l => l.status_lead === 'Comprou');
+      }
+
+      // 5. Filtrar por Termo de Busca
+      const query = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+      if (query) {
+        filtered = filtered.filter(l => {
+          const name = (l.nome || '').toLowerCase();
+          const phone = (l.whatsapp || l.telefone || '').toLowerCase();
+          const docEmail = (l.email_documento || l.cpf_cnpj || l.documento || l.email || '').toLowerCase();
+          const funnelId = (l.funil_id || '').toLowerCase();
+          return name.includes(query) || phone.includes(query) || docEmail.includes(query) || funnelId.includes(query);
+        });
+      }
+
+      // 6. Ordenação
+      const sortOrder = document.getElementById('sortOrder').value;
+      if (sortOrder === 'oldest') {
+        filtered.sort((a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0));
+      } else if (sortOrder === 'name') {
+        filtered.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+      } else {
+        // default recent
+        filtered.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+      }
+
+      // 7. Renderizar Tabela
+      renderTable(filtered);
+    }
+
+    // ATUALIZAÇÃO DOS CARDS DE MÉTRICAS DINÂMICOS
+    function updateMetricCards(leads) {
+      const total = leads.length;
+      const formCount = leads.filter(l => l.status_lead === 'Preencheu Formulário').length;
+      const checkoutCount = leads.filter(l => l.status_lead === 'Iniciou Checkout').length;
+      const comprouCount = leads.filter(l => l.status_lead === 'Comprou').length;
+
+      // Soma de receita (valor_pago)
+      let totalReceita = 0;
+      leads.forEach(l => {
+        if (l.status_lead === 'Comprou' && l.valor_pago) {
+          const num = parseFloat(String(l.valor_pago).replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
+          totalReceita += num;
+        }
+      });
+
+      document.getElementById('metricTotalLeads').innerText = total;
+      document.getElementById('metricPreencheu').innerText = formCount;
+      document.getElementById('metricCheckout').innerText = checkoutCount;
+      document.getElementById('metricComprou').innerText = comprouCount;
+
+      // Taxas calculadas
+      const funnelName = currentFunnel === 'all' 
+        ? 'Todos os Funis' 
+        : (currentFunnel === 'quiz_prosperus' ? 'Quiz Prosperus' : 'Informativo / Venda');
+      document.getElementById('metricTotalSubtitle').innerText = `Funil: ${funnelName}`;
+
+      const checkoutRate = total > 0 ? ((checkoutCount / total) * 100).toFixed(1) : '0';
+      document.getElementById('metricCheckoutRate').innerText = `${checkoutRate}% conversão`;
+
+      const comprouRate = total > 0 ? ((comprouCount / total) * 100).toFixed(1) : '0';
+      const formattedReceita = totalReceita.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      document.getElementById('metricTotalReceita').innerText = totalReceita > 0 ? `${formattedReceita} faturado` : `${comprouRate}% vendas`;
+    }
+
+    // ATUALIZAÇÃO DOS BADGES NAS SUB-ABAS DE STATUS
+    function updateStatusSubTabBadges(leads) {
+      const total = leads.length;
+      const formCount = leads.filter(l => l.status_lead === 'Preencheu Formulário').length;
+      const checkoutCount = leads.filter(l => l.status_lead === 'Iniciou Checkout').length;
+      const comprouCount = leads.filter(l => l.status_lead === 'Comprou').length;
+
+      document.getElementById('statusBadge-ALL').innerText = total;
+      document.getElementById('statusBadge-FORMULARIO').innerText = formCount;
+      document.getElementById('statusBadge-CHECKOUT').innerText = checkoutCount;
+      document.getElementById('statusBadge-COMPROU').innerText = comprouCount;
+    }
+
+    // 7. RENDERIZAR TABELA DE LEADS
+    function renderTable(leads) {
+      const tbody = document.getElementById('leadsTableBody');
+      const emptyState = document.getElementById('emptyState');
+      const countText = document.getElementById('leadsCountText');
+
+      tbody.innerHTML = '';
+      countText.innerText = `${leads.length} ${leads.length === 1 ? 'lead' : 'leads'}`;
+
+      if (leads.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      leads.forEach(lead => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-[#FBF7EE]/60 transition border-b border-gray-100 text-[#062E20]';
+
+        // 1. Data e Hora
+        const dateStr = lead.created_at 
+          ? new Date(lead.created_at).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })
+          : (lead.data_registro || '-');
+
+        // 2. Funil de Origem (Badge)
+        const funnelMeta = window.getFunnelMeta ? window.getFunnelMeta(lead.funil_id) : { shortName: lead.funil_id || 'Quiz', badgeClass: 'bg-emerald-50 text-emerald-800 border-emerald-300' };
+        const funnelBadge = `
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${funnelMeta.badgeClass}">
+            <i class="fa-solid ${funnelMeta.icon || 'fa-filter'} text-[10px]"></i>
+            <span>${funnelMeta.shortName}</span>
+          </span>
+        `;
+
+        // 3. Nome & Documento
+        const nomeLead = lead.nome || 'Não informado';
+        const docEmail = lead.email_documento || lead.cpf_cnpj || lead.documento || lead.email || 'Documento não informado';
+
+        // 4. WhatsApp & E-mail
+        const rawPhone = lead.whatsapp || lead.telefone || '';
+        const cleanPhone = rawPhone.replace(/\D/g, '');
+        const formattedWaPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
+        
+        // Mensagem contextual para o WhatsApp
+        let waMsg = '';
+        if (lead.status_lead === 'Comprou') {
+          waMsg = encodeURIComponent(`Olá ${lead.nome || ''}! Parabéns pela aquisição no Prosperus! Seu relatório está pronto. Como podemos te ajudar hoje?`);
+        } else if (lead.status_lead === 'Iniciou Checkout') {
+          waMsg = encodeURIComponent(`Olá ${lead.nome || ''}! Vi que você iniciou seu pedido no Prosperus mas faltou pouco para concluir. Precisa de suporte com Pix ou Cartão?`);
+        } else {
+          waMsg = encodeURIComponent(`Olá ${lead.nome || ''}! Vi que você preencheu o diagnóstico no Prosperus! Posso te auxiliar com as próximas etapas da sua análise?`);
+        }
+        const waLink = cleanPhone ? `https://wa.me/${formattedWaPhone}?text=${waMsg}` : '#';
+
+        // 5. Status de Conversão
+        let statusBadge = '';
+        const valorPagoStr = lead.valor_pago && lead.valor_pago !== '0' ? ` • R$ ${lead.valor_pago}` : '';
+
+        if (lead.status_lead === 'Comprou') {
+          statusBadge = `
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-300">
+              <i class="fa-solid fa-circle-check text-emerald-600"></i>
+              <span>Comprou${valorPagoStr}</span>
+            </span>
+          `;
+        } else if (lead.status_lead === 'Iniciou Checkout') {
+          statusBadge = `
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300">
+              <i class="fa-solid fa-cart-shopping text-amber-600"></i>
+              <span>Iniciou Checkout</span>
+            </span>
+          `;
+        } else {
+          statusBadge = `
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-800 border border-blue-200">
+              <i class="fa-regular fa-clipboard text-blue-600"></i>
+              <span>Preencheu Formulário</span>
+            </span>
+          `;
+        }
+
+        // 6. Montagem da Linha
+        tr.innerHTML = `
+          <td class="py-3.5 px-4 text-xs font-semibold text-gray-500 whitespace-nowrap">
+            ${dateStr}
+          </td>
+          <td class="py-3.5 px-4 whitespace-nowrap">
+            ${funnelBadge}
+          </td>
+          <td class="py-3.5 px-4">
+            <div class="font-bold text-[#062E20] leading-tight">${nomeLead}</div>
+            <div class="text-[11px] font-mono text-gray-400 mt-0.5 truncate max-w-xs">${docEmail}</div>
+          </td>
+          <td class="py-3.5 px-4 whitespace-nowrap">
+            <div class="flex items-center gap-2">
+              <a href="${waLink}" target="_blank" rel="noopener" title="Abrir conversa no WhatsApp"
+                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-semibold text-xs border border-emerald-200 hover:bg-emerald-600 hover:text-white transition">
+                <i class="fa-brands fa-whatsapp text-sm"></i>
+                <span>${rawPhone || 'Sem telefone'}</span>
+              </a>
+            </div>
+          </td>
+          <td class="py-3.5 px-4 whitespace-nowrap">
+            ${statusBadge}
+          </td>
+          <td class="py-3.5 px-4 text-center whitespace-nowrap">
+            <div class="inline-flex items-center gap-1.5">
+              <button onclick="openLeadDetails(${lead.id})" title="Ver todos os dados do lead"
+                class="px-3 py-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-[#062E20] font-bold text-xs inline-flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-eye text-[#C59B27]"></i>
+                <span>Detalhes</span>
+              </button>
+
+              <a href="${waLink}" target="_blank" rel="noopener" title="Chamar no WhatsApp"
+                class="px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs inline-flex items-center gap-1 shadow-sm transition">
+                <i class="fa-brands fa-whatsapp"></i>
+              </a>
+            </div>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // 8. FILTRO EM TEMPO REAL
+    function handleFilterChange() {
+      applyFiltersAndRender();
+    }
+
+    function resetFilters() {
+      document.getElementById('searchInput').value = '';
+      currentFunnel = 'all';
+      currentStatusTab = 'ALL';
+      setFunnelTab('all');
+      setStatusTab('ALL');
+    }
+
+    // 9. MODAL DE DETALHES
+    function openLeadDetails(leadId) {
+      const lead = allLeads.find(l => l.id === leadId);
+      if (!lead) return;
+
+      activeLeadForModal = lead;
+
+      document.getElementById('modalLeadNome').innerText = lead.nome || 'Lead sem nome';
+      document.getElementById('modalLeadId').innerText = `#${lead.id}`;
+      document.getElementById('modalLeadCreatedAt').innerText = lead.created_at ? new Date(lead.created_at).toLocaleString('pt-BR') : '-';
+      
+      const funnelMeta = window.getFunnelMeta ? window.getFunnelMeta(lead.funil_id) : { name: lead.funil_id, badgeClass: 'bg-gray-100 text-gray-700' };
+      const badgeEl = document.getElementById('modalLeadBadgeFunil');
+      badgeEl.className = `px-2 py-0.5 rounded-full text-[10px] font-bold border ${funnelMeta.badgeClass}`;
+      badgeEl.innerText = funnelMeta.name;
+
+      const rawPhone = lead.whatsapp || lead.telefone || 'Não informado';
+      const cleanPhone = rawPhone.replace(/\D/g, '');
+      const formattedWaPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
+      
+      document.getElementById('modalLeadPhone').innerText = rawPhone;
+      const waBtn = document.getElementById('modalLeadWaBtn');
+      if (cleanPhone) {
+        waBtn.href = `https://wa.me/${formattedWaPhone}`;
+        waBtn.classList.remove('hidden');
+      } else {
+        waBtn.classList.add('hidden');
+      }
+
+      document.getElementById('modalLeadDocEmail').innerText = lead.email_documento || lead.cpf_cnpj || lead.documento || lead.email || '-';
+
+      // Configurar inputs de edição rápida
+      document.getElementById('modalEditStatus').value = lead.status_lead || 'Preencheu Formulário';
+      document.getElementById('modalEditFunnel').value = lead.funil_id || 'quiz_prosperus';
+      document.getElementById('modalEditValor').value = lead.valor_pago || '';
+
+      // Campos do Quiz / Diagnóstico
+      document.getElementById('modalRenda').innerText = lead.faixa_renda || '-';
+      document.getElementById('modalCapacidade').innerText = lead.capacidade_mensal || '-';
+      document.getElementById('modalCpfAcomp').innerText = lead.acompanha_cpf || '-';
+      document.getElementById('modalBancos').innerText = lead.qtd_bancos || '-';
+
+      document.getElementById('detailsModal').classList.remove('hidden');
+    }
+
+    function closeDetailsModal() {
+      document.getElementById('detailsModal').classList.add('hidden');
+      activeLeadForModal = null;
+    }
+
+    // SALVAR ALTERAÇÕES DO LEAD NO SUPABASE
+    async function saveLeadChanges() {
+      if (!activeLeadForModal) return;
+
+      const btn = document.getElementById('btnSaveLead');
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Salvando...</span>`;
+      btn.disabled = true;
+
+      const newStatus = document.getElementById('modalEditStatus').value;
+      const newFunnel = document.getElementById('modalEditFunnel').value;
+      const newValor = document.getElementById('modalEditValor').value.trim();
+
+      try {
+        const client = window.getSupabaseClient ? window.getSupabaseClient() : null;
+        if (!client) throw new Error('Cliente Supabase não disponível');
+
+        const updateData = {
+          status_lead: newStatus,
+          valor_pago: newValor || '0'
+        };
+
+        // Atualiza funil_id caso a coluna exista
+        if (newFunnel) {
+          updateData.funil_id = newFunnel;
+        }
+
+        const { error } = await client
+          .from('quiz_leads')
+          .update(updateData)
+          .eq('id', activeLeadForModal.id);
+
+        if (error) {
+          // Se coluna funil_id não existir na tabela ainda, tenta salvar sem funil_id
+          if (error.message && error.message.includes('funil_id')) {
+            delete updateData.funil_id;
+            await client.from('quiz_leads').update(updateData).eq('id', activeLeadForModal.id);
+          } else {
+            throw error;
+          }
+        }
+
+        // Atualiza estado local
+        activeLeadForModal.status_lead = newStatus;
+        activeLeadForModal.valor_pago = newValor || '0';
+        activeLeadForModal.funil_id = newFunnel;
+
+        showToast('Lead Atualizado', `Lead #${activeLeadForModal.id} atualizado com sucesso!`);
+        closeDetailsModal();
+        applyFiltersAndRender();
+        updateFunnelTabCounts();
+
+      } catch (err) {
+        console.error('Erro ao salvar lead:', err);
+        showToast('Erro ao Salvar', err.message, 'error');
+      } finally {
+        btn.innerHTML = originalHtml;
+        btn.disabled = false;
+      }
+    }
+
+    function copySingleLeadInfo() {
+      if (!activeLeadForModal) return;
+      const lead = activeLeadForModal;
+      const info = `Lead Prosperus: ${lead.nome || 'Sem nome'}\nWhatsApp: ${lead.whatsapp || '-'}\nDoc: ${lead.email_documento || '-'}\nFunil: ${lead.funil_id}\nStatus: ${lead.status_lead}`;
+      navigator.clipboard.writeText(info).then(() => {
+        showToast('Copiado', 'Dados do lead copiados para a área de transferência.');
+      });
+    }
+
+    // 10. EXPORTAR PARA CSV COM UTF-8 BOM
+    function exportToCSV() {
+      let leadsToExport = allLeads;
+      if (currentFunnel !== 'all') {
+        leadsToExport = allLeads.filter(l => l.funil_id === currentFunnel);
+      }
+
+      if (leadsToExport.length === 0) {
+        showToast('Sem dados', 'Nenhum lead disponível para exportar no funil selecionado.', 'warning');
+        return;
+      }
+
+      const headers = ['ID', 'Data/Hora', 'Funil ID', 'Nome', 'WhatsApp', 'Email/Documento', 'Status', 'Valor Pago', 'Faixa de Renda', 'Capacidade Mensal', 'Acompanha CPF', 'Qtd Bancos'];
+      
+      const rows = leadsToExport.map(l => {
+        return [
+          l.id,
+          l.created_at ? new Date(l.created_at).toLocaleString('pt-BR') : (l.data_registro || ''),
+          l.funil_id || 'quiz_prosperus',
+          `"${(l.nome || '').replace(/"/g, '""')}"`,
+          `"${(l.whatsapp || l.telefone || '').replace(/"/g, '""')}"`,
+          `"${(l.email_documento || l.cpf_cnpj || l.documento || l.email || '').replace(/"/g, '""')}"`,
+          `"${(l.status_lead || 'Preencheu Formulário').replace(/"/g, '""')}"`,
+          `"${(l.valor_pago || '0').replace(/"/g, '""')}"`,
+          `"${(l.faixa_renda || '').replace(/"/g, '""')}"`,
+          `"${(l.capacidade_mensal || '').replace(/"/g, '""')}"`,
+          `"${(l.acompanha_cpf || '').replace(/"/g, '""')}"`,
+          `"${(l.qtd_bancos || '').replace(/"/g, '""')}"`
+        ].join(';');
+      });
+
+      // Inclui BOM UTF-8 (\uFEFF) para abrir no Excel do Windows sem erro de acentuação
+      const csvContent = '\uFEFF' + [headers.join(';'), ...rows].join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      const filename = `central_funis_prosperus_${currentFunnel}_${new Date().toISOString().slice(0, 10)}.csv`;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      showToast('Download Iniciado', `Arquivo ${filename} exportado com sucesso!`);
+    }
+
+    // 11. COPIAR CONTATOS PARA WHATSAPP
+    function copyFilteredContacts() {
+      let leadsToCopy = allLeads;
+      if (currentFunnel !== 'all') {
+        leadsToCopy = allLeads.filter(l => l.funil_id === currentFunnel);
+      }
+
+      if (leadsToCopy.length === 0) {
+        showToast('Sem contatos', 'Nenhum lead encontrado para copiar.', 'warning');
+        return;
+      }
+
+      const contactList = leadsToCopy
+        .map(l => `${l.nome || 'Lead'} - ${l.whatsapp || l.telefone || 'Sem número'}`)
+        .join('\n');
+
+      navigator.clipboard.writeText(contactList).then(() => {
+        const btnText = document.getElementById('copyBtnText');
+        const originalText = btnText.innerText;
+        btnText.innerText = 'Copiado para Área de Transferência!';
+        showToast('Contatos Copiados', `${leadsToCopy.length} contatos copiados no formato WhatsApp.`);
+        setTimeout(() => {
+          btnText.innerText = originalText;
+        }, 3000);
+      }).catch(err => {
+        showToast('Erro ao Copiar', 'Não foi possível acessar a área de transferência: ' + err.message, 'error');
+      });
+    }
+
+    // 12. TOAST NOTIFICATIONS
+    function showToast(title, message, type = 'success') {
+      const toast = document.getElementById('toastNotification');
+      const toastTitle = document.getElementById('toastTitle');
+      const toastMsg = document.getElementById('toastMessage');
+      const toastIcon = document.getElementById('toastIcon');
+
+      toastTitle.innerText = title;
+      toastMsg.innerText = message;
+
+      if (type === 'error') {
+        toastIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+        toastIcon.className = 'w-8 h-8 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center font-bold text-sm';
+        toastTitle.className = 'text-xs font-bold text-red-400';
+      } else if (type === 'warning') {
+        toastIcon.innerHTML = '<i class="fa-solid fa-circle-info"></i>';
+        toastIcon.className = 'w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm';
+        toastTitle.className = 'text-xs font-bold text-amber-400';
+      } else {
+        toastIcon.innerHTML = '<i class="fa-solid fa-check"></i>';
+        toastIcon.className = 'w-8 h-8 rounded-xl bg-[#C59B27]/20 text-[#C59B27] flex items-center justify-center font-bold text-sm';
+        toastTitle.className = 'text-xs font-bold text-[#C59B27]';
+      }
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 4000);
+    }
+
+    // 13. MODAL SQL
+    function openSqlModal() {
+      document.getElementById('sqlModal').classList.remove('hidden');
+    }
+    function closeSqlModal() {
+      document.getElementById('sqlModal').classList.add('hidden');
+    }
+    function copySqlCode() {
+      const code = "ALTER TABLE quiz_leads ADD COLUMN IF NOT EXISTS funil_id TEXT DEFAULT 'quiz_prosperus';";
+      navigator.clipboard.writeText(code).then(() => {
+        showToast('SQL Copiado', 'Comando copiado para a área de transferência.');
+      });
+    }
+
+    // INICIALIZAÇÃO AUTOMÁTICA
+    window.addEventListener('DOMContentLoaded', () => {
+      const isAuth = localStorage.getItem('prosperus_central_auth');
+      if (isAuth === 'true') {
+        showDashboard();
+      } else {
+        showLogin();
+      }
+    });
+  </script>
+</body>
+</html>
