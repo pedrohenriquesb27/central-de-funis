@@ -509,7 +509,94 @@
       </div>
 
       <!-- ========================================================================= -->
-      <!-- 5. CARDS DE MÉTRICAS DINÂMICOS DO FUNIL SELECIONADO                       -->
+      <!-- 5. MENU DE FILTRO DE DATA / PERÍODO                                       -->
+      <!-- ========================================================================= -->
+      <div class="bg-white p-4 sm:p-5 rounded-2xl border border-gray-200/80 shadow-sm space-y-3">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
+          
+          <!-- Presets Rápidos -->
+          <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+            <span class="text-xs font-extrabold text-[#062E20] uppercase tracking-wider flex items-center gap-1.5 mr-1.5">
+              <i class="fa-regular fa-calendar-days text-[#C59B27] text-sm"></i>
+              <span>Data / Período:</span>
+            </span>
+
+            <!-- Botão: Todo o Período -->
+            <button onclick="setDateFilter('all')" id="date-btn-all"
+              class="date-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-[#062E20] text-[#C59B27] shadow-xs cursor-pointer border border-[#062E20]">
+              Todo o Período
+            </button>
+
+            <!-- Botão: Hoje -->
+            <button onclick="setDateFilter('today')" id="date-btn-today"
+              class="date-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-gray-50 hover:bg-gray-100 text-gray-700 border border-gray-200 cursor-pointer">
+              Hoje
+            </button>
+
+            <!-- Botão: Ontem -->
+            <button onclick="setDateFilter('yesterday')" id="date-btn-yesterday"
+              class="date-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-gray-50 hover:bg-gray-100 text-gray-700 border border-gray-200 cursor-pointer">
+              Ontem
+            </button>
+
+            <!-- Botão: Últimos 7 dias -->
+            <button onclick="setDateFilter('7d')" id="date-btn-7d"
+              class="date-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-gray-50 hover:bg-gray-100 text-gray-700 border border-gray-200 cursor-pointer">
+              7 Dias
+            </button>
+
+            <!-- Botão: Últimos 14 dias -->
+            <button onclick="setDateFilter('14d')" id="date-btn-14d"
+              class="date-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-gray-50 hover:bg-gray-100 text-gray-700 border border-gray-200 cursor-pointer">
+              14 Dias
+            </button>
+
+            <!-- Botão: Últimos 30 dias -->
+            <button onclick="setDateFilter('30d')" id="date-btn-30d"
+              class="date-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-gray-50 hover:bg-gray-100 text-gray-700 border border-gray-200 cursor-pointer">
+              30 Dias
+            </button>
+          </div>
+
+          <!-- Filtro de Data Personalizada (Campos De / Até) -->
+          <div class="flex flex-wrap items-center gap-2 pt-2 lg:pt-0 border-t lg:border-t-0 border-gray-100">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider text-[11px] whitespace-nowrap">Escolher Data:</span>
+            
+            <div class="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1">
+              <label for="dateInputStart" class="text-[11px] font-bold text-gray-400">De:</label>
+              <input type="date" id="dateInputStart" onchange="handleCustomDateChange()"
+                class="text-xs text-[#062E20] font-semibold bg-transparent outline-none cursor-pointer">
+            </div>
+
+            <div class="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1">
+              <label for="dateInputEnd" class="text-[11px] font-bold text-gray-400">Até:</label>
+              <input type="date" id="dateInputEnd" onchange="handleCustomDateChange()"
+                class="text-xs text-[#062E20] font-semibold bg-transparent outline-none cursor-pointer">
+            </div>
+
+            <!-- Botão Limpar Filtro de Data -->
+            <button onclick="clearCustomDate()" id="clearDateBtn" title="Limpar filtro de data"
+              class="hidden px-2.5 py-1 text-xs text-red-600 hover:bg-red-50 rounded-lg transition font-bold cursor-pointer">
+              <i class="fa-solid fa-xmark"></i> <span>Limpar</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Descrição Informativa do Filtro Ativo -->
+        <div class="text-[11px] text-gray-500 font-medium flex items-center justify-between border-t border-gray-100 pt-2.5">
+          <span id="activeDatePeriodDescription" class="flex items-center gap-1.5">
+            <i class="fa-solid fa-clock-rotate-left text-[#C59B27] text-xs"></i>
+            <span>Exibindo dados de: <strong class="text-[#062E20]">Todo o Período</strong></span>
+          </span>
+          <span id="dateFilteredCountText" class="text-[#062E20] font-bold text-xs">
+            0 leads encontrados
+          </span>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- 6. CARDS DE MÉTRICAS DINÂMICOS DO FUNIL SELECIONADO                       -->
       <!-- ========================================================================= -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
@@ -1029,6 +1116,7 @@
     let allLeads = [];
     let currentFunnel = 'all';        // 'all', 'prosperus_principal', 'prosperus_funil_02', 'quiz_prosperus'
     let currentStatusTab = 'ALL';     // 'ALL', 'FORMULARIO', 'CHECKOUT', 'COMPROU'
+    let currentDateFilter = 'all';    // 'all', 'today', 'yesterday', '7d', '14d', '30d', 'custom'
     let activeLeadForModal = null;
 
     // 1. AUTENTICAÇÃO / LOGIN
@@ -1118,8 +1206,6 @@
         document.getElementById('lastUpdatedTime').innerText = `• Atualizado às ${now.toLocaleTimeString('pt-BR')}`;
         document.getElementById('syncStatusText').innerText = `Online (${allLeads.length} leads)`;
 
-        updateFunnelTabCounts();
-        renderOverviewFunnelsData();
         applyFiltersAndRender();
         showToast('Dados Atualizados', `${allLeads.length} leads sincronizados com o Supabase.`);
 
@@ -1132,12 +1218,194 @@
       }
     }
 
+    // 2.1 FUNÇÕES DE PARSING E FILTRAGEM POR DATA
+    function parseLeadDate(lead) {
+      if (!lead) return null;
+      if (lead.created_at) {
+        const d = new Date(lead.created_at);
+        if (!isNaN(d.getTime())) return d;
+      }
+      if (lead.data_registro) {
+        const str = String(lead.data_registro).trim();
+        const brMatch = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+        if (brMatch) {
+          const day = parseInt(brMatch[1], 10);
+          const month = parseInt(brMatch[2], 10) - 1;
+          const year = parseInt(brMatch[3], 10);
+          const timeMatch = str.match(/(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?/);
+          if (timeMatch) {
+            return new Date(year, month, day, parseInt(timeMatch[1], 10), parseInt(timeMatch[2], 10), timeMatch[3] ? parseInt(timeMatch[3], 10) : 0);
+          }
+          return new Date(year, month, day, 12, 0, 0);
+        }
+        const d = new Date(str);
+        if (!isNaN(d.getTime())) return d;
+      }
+      return null;
+    }
+
+    function filterLeadsByDate(leads) {
+      if (!leads || leads.length === 0) return [];
+      if (currentDateFilter === 'all') return leads;
+
+      const now = new Date();
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+      const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+
+      let filterStart = null;
+      let filterEnd = null;
+
+      if (currentDateFilter === 'today') {
+        filterStart = todayStart;
+        filterEnd = todayEnd;
+      } else if (currentDateFilter === 'yesterday') {
+        filterStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 0, 0, 0, 0);
+        filterEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 23, 59, 59, 999);
+      } else if (currentDateFilter === '7d') {
+        filterStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6, 0, 0, 0, 0);
+        filterEnd = todayEnd;
+      } else if (currentDateFilter === '14d') {
+        filterStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 13, 0, 0, 0, 0);
+        filterEnd = todayEnd;
+      } else if (currentDateFilter === '30d') {
+        filterStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29, 0, 0, 0, 0);
+        filterEnd = todayEnd;
+      } else if (currentDateFilter === 'custom') {
+        const startVal = document.getElementById('dateInputStart')?.value;
+        const endVal = document.getElementById('dateInputEnd')?.value;
+
+        if (startVal) {
+          const [y, m, d] = startVal.split('-').map(Number);
+          filterStart = new Date(y, m - 1, d, 0, 0, 0, 0);
+        }
+        if (endVal) {
+          const [y, m, d] = endVal.split('-').map(Number);
+          filterEnd = new Date(y, m - 1, d, 23, 59, 59, 999);
+        }
+      }
+
+      return leads.filter(lead => {
+        const leadDate = parseLeadDate(lead);
+        if (!leadDate) return false;
+        if (filterStart && leadDate < filterStart) return false;
+        if (filterEnd && leadDate > filterEnd) return false;
+        return true;
+      });
+    }
+
+    function setDateFilter(filterType) {
+      currentDateFilter = filterType;
+
+      if (filterType !== 'custom') {
+        const startInput = document.getElementById('dateInputStart');
+        const endInput = document.getElementById('dateInputEnd');
+        if (startInput) startInput.value = '';
+        if (endInput) endInput.value = '';
+        const clearBtn = document.getElementById('clearDateBtn');
+        if (clearBtn) clearBtn.classList.add('hidden');
+      }
+
+      // Atualiza visual dos botões de preset
+      const presets = ['all', 'today', 'yesterday', '7d', '14d', '30d'];
+      presets.forEach(p => {
+        const btn = document.getElementById(`date-btn-${p}`);
+        if (!btn) return;
+        if (p === filterType) {
+          btn.className = 'date-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-[#062E20] text-[#C59B27] shadow-xs cursor-pointer border border-[#062E20]';
+        } else {
+          btn.className = 'date-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-gray-50 hover:bg-gray-100 text-gray-700 border border-gray-200 cursor-pointer';
+        }
+      });
+
+      updateDatePeriodDescription();
+      applyFiltersAndRender();
+    }
+
+    function handleCustomDateChange() {
+      const startVal = document.getElementById('dateInputStart')?.value;
+      const endVal = document.getElementById('dateInputEnd')?.value;
+      const clearBtn = document.getElementById('clearDateBtn');
+
+      if (startVal || endVal) {
+        currentDateFilter = 'custom';
+        if (clearBtn) clearBtn.classList.remove('hidden');
+
+        // Desmarca presets
+        const presets = ['all', 'today', 'yesterday', '7d', '14d', '30d'];
+        presets.forEach(p => {
+          const btn = document.getElementById(`date-btn-${p}`);
+          if (btn) {
+            btn.className = 'date-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-gray-50 hover:bg-gray-100 text-gray-700 border border-gray-200 cursor-pointer';
+          }
+        });
+
+        updateDatePeriodDescription();
+        applyFiltersAndRender();
+      } else {
+        setDateFilter('all');
+      }
+    }
+
+    function clearCustomDate() {
+      const startInput = document.getElementById('dateInputStart');
+      const endInput = document.getElementById('dateInputEnd');
+      if (startInput) startInput.value = '';
+      if (endInput) endInput.value = '';
+      setDateFilter('all');
+    }
+
+    function updateDatePeriodDescription() {
+      const descEl = document.getElementById('activeDatePeriodDescription');
+      if (!descEl) return;
+
+      const now = new Date();
+      const formatPtDate = (d) => d.toLocaleDateString('pt-BR');
+
+      let text = 'Todo o Período';
+      if (currentDateFilter === 'today') {
+        text = `Hoje (${formatPtDate(now)})`;
+      } else if (currentDateFilter === 'yesterday') {
+        const y = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+        text = `Ontem (${formatPtDate(y)})`;
+      } else if (currentDateFilter === '7d') {
+        const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+        text = `Últimos 7 dias (${formatPtDate(start)} a ${formatPtDate(now)})`;
+      } else if (currentDateFilter === '14d') {
+        const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 13);
+        text = `Últimos 14 dias (${formatPtDate(start)} a ${formatPtDate(now)})`;
+      } else if (currentDateFilter === '30d') {
+        const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29);
+        text = `Últimos 30 dias (${formatPtDate(start)} a ${formatPtDate(now)})`;
+      } else if (currentDateFilter === 'custom') {
+        const startVal = document.getElementById('dateInputStart')?.value;
+        const endVal = document.getElementById('dateInputEnd')?.value;
+        if (startVal && endVal) {
+          const [sy, sm, sd] = startVal.split('-');
+          const [ey, em, ed] = endVal.split('-');
+          text = `Período personalizado (${sd}/${sm}/${sy} a ${ed}/${em}/${ey})`;
+        } else if (startVal) {
+          const [sy, sm, sd] = startVal.split('-');
+          text = `A partir de ${sd}/${sm}/${sy}`;
+        } else if (endVal) {
+          const [ey, em, ed] = endVal.split('-');
+          text = `Até ${ed}/${em}/${ey}`;
+        } else {
+          text = 'Todo o Período';
+        }
+      }
+
+      descEl.innerHTML = `
+        <i class="fa-solid fa-clock-rotate-left text-[#C59B27] text-xs"></i>
+        <span>Exibindo dados de: <strong class="text-[#062E20]">${text}</strong></span>
+      `;
+    }
+
     // 3. ATUALIZA CONTADORES DAS ABAS DE FUNIL
-    function updateFunnelTabCounts() {
-      const totalAll = allLeads.length;
-      const countPrincipal = allLeads.filter(l => l.funil_id === 'prosperus_principal').length;
-      const countFunil02 = allLeads.filter(l => l.funil_id === 'prosperus_funil_02').length;
-      const countQuiz = allLeads.filter(l => l.funil_id === 'quiz_prosperus').length;
+    function updateFunnelTabCounts(leads = allLeads) {
+      const totalAll = leads.length;
+      const countPrincipal = leads.filter(l => l.funil_id === 'prosperus_principal').length;
+      const countFunil02 = leads.filter(l => l.funil_id === 'prosperus_funil_02').length;
+      const countQuiz = leads.filter(l => l.funil_id === 'quiz_prosperus').length;
 
       document.getElementById('funnelCount-all').innerText = totalAll;
       document.getElementById('funnelCount-prosperus_principal').innerText = countPrincipal;
@@ -1146,29 +1414,29 @@
     }
 
     // 4. ATUALIZA OS CARDS DO RESUMO DOS 3 FUNIS EM ORDEM (VISÃO GERAL)
-    function renderOverviewFunnelsData() {
+    function renderOverviewFunnelsData(leads = allLeads) {
       // Funil 1: Prosperus Principal
-      const leadsPrincipal = allLeads.filter(l => l.funil_id === 'prosperus_principal');
+      const leadsPrincipal = leads.filter(l => l.funil_id === 'prosperus_principal');
       const checkoutsPrincipal = leadsPrincipal.filter(l => l.status_lead === 'Iniciou Checkout' || l.status_lead === 'Comprou' || l.status_lead === 'Aguardando Pagamento').length;
       const vendasPrincipal = leadsPrincipal.filter(l => l.status_lead === 'Comprou').length;
       const taxaPrincipal = checkoutsPrincipal > 0 ? ((vendasPrincipal / checkoutsPrincipal) * 100).toFixed(0) : '0';
 
       // Funil 2: Prosperus Funil 02
-      const leadsFunil02 = allLeads.filter(l => l.funil_id === 'prosperus_funil_02');
+      const leadsFunil02 = leads.filter(l => l.funil_id === 'prosperus_funil_02');
       const checkoutsFunil02 = leadsFunil02.filter(l => l.status_lead === 'Iniciou Checkout' || l.status_lead === 'Comprou' || l.status_lead === 'Aguardando Pagamento').length;
       const vendasFunil02 = leadsFunil02.filter(l => l.status_lead === 'Comprou').length;
       const taxaFunil02 = checkoutsFunil02 > 0 ? ((vendasFunil02 / checkoutsFunil02) * 100).toFixed(0) : '0';
 
       // Funil 3: Quiz Prosperus
-      const leadsQuiz = allLeads.filter(l => l.funil_id === 'quiz_prosperus');
+      const leadsQuiz = leads.filter(l => l.funil_id === 'quiz_prosperus');
       const formQuiz = leadsQuiz.filter(l => l.status_lead === 'Preencheu Formulário').length;
       const checkoutsQuiz = leadsQuiz.filter(l => l.status_lead === 'Iniciou Checkout' || l.status_lead === 'Comprou' || l.status_lead === 'Aguardando Pagamento').length;
       const vendasQuiz = leadsQuiz.filter(l => l.status_lead === 'Comprou').length;
 
       // Cálculo de faturamento
-      const calcReceita = (leads) => {
+      const calcReceita = (leadsList) => {
         let sum = 0;
-        leads.forEach(l => {
+        leadsList.forEach(l => {
           if (l.status_lead === 'Comprou' && l.valor_pago) {
             const num = parseFloat(String(l.valor_pago).replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
             sum += num;
@@ -1316,9 +1584,21 @@
 
     // 7. FILTRAGEM E ATUALIZAÇÃO
     function applyFiltersAndRender() {
-      let funnelLeads = allLeads;
+      const dateFilteredLeads = filterLeadsByDate(allLeads);
+
+      // Atualiza contador de leads no badge do filtro de data
+      const dateCountEl = document.getElementById('dateFilteredCountText');
+      if (dateCountEl) {
+        dateCountEl.innerText = `${dateFilteredLeads.length} ${dateFilteredLeads.length === 1 ? 'lead no período' : 'leads no período'}`;
+      }
+
+      // Atualiza os contadores das abas e métricas do resumo com base na data ativa
+      updateFunnelTabCounts(dateFilteredLeads);
+      renderOverviewFunnelsData(dateFilteredLeads);
+
+      let funnelLeads = dateFilteredLeads;
       if (currentFunnel !== 'all') {
-        funnelLeads = allLeads.filter(l => l.funil_id === currentFunnel);
+        funnelLeads = dateFilteredLeads.filter(l => l.funil_id === currentFunnel);
       }
 
       updateMetricCards(funnelLeads);
@@ -1347,11 +1627,11 @@
 
       const sortOrder = document.getElementById('sortOrder').value;
       if (sortOrder === 'oldest') {
-        filtered.sort((a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0));
+        filtered.sort((a, b) => (parseLeadDate(a) || 0) - (parseLeadDate(b) || 0));
       } else if (sortOrder === 'name') {
         filtered.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
       } else {
-        filtered.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+        filtered.sort((a, b) => (parseLeadDate(b) || 0) - (parseLeadDate(a) || 0));
       }
 
       renderTable(filtered);
@@ -1551,6 +1831,7 @@
       currentStatusTab = 'ALL';
       setFunnelTab('all');
       setStatusTab('ALL');
+      setDateFilter('all');
     }
 
     // 10. MODAL DE DETALHES DO LEAD
@@ -1670,13 +1951,14 @@
 
     // 11. EXPORTAÇÕES E CÓPIAS
     function exportToCSV() {
-      let leadsToExport = allLeads;
+      const dateFilteredLeads = filterLeadsByDate(allLeads);
+      let leadsToExport = dateFilteredLeads;
       if (currentFunnel !== 'all') {
-        leadsToExport = allLeads.filter(l => l.funil_id === currentFunnel);
+        leadsToExport = dateFilteredLeads.filter(l => l.funil_id === currentFunnel);
       }
 
       if (leadsToExport.length === 0) {
-        showToast('Sem dados', 'Nenhum lead para exportar no funil selecionado.', 'warning');
+        showToast('Sem dados', 'Nenhum lead para exportar no funil e período selecionados.', 'warning');
         return;
       }
 
@@ -1704,7 +1986,7 @@
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.setAttribute('href', url);
-      const filename = `leads_prosperus_${currentFunnel}_${new Date().toISOString().slice(0, 10)}.csv`;
+      const filename = `leads_prosperus_${currentFunnel}_${currentDateFilter}_${new Date().toISOString().slice(0, 10)}.csv`;
       link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
@@ -1714,13 +1996,14 @@
     }
 
     function copyFilteredContacts() {
-      let leadsToCopy = allLeads;
+      const dateFilteredLeads = filterLeadsByDate(allLeads);
+      let leadsToCopy = dateFilteredLeads;
       if (currentFunnel !== 'all') {
-        leadsToCopy = allLeads.filter(l => l.funil_id === currentFunnel);
+        leadsToCopy = dateFilteredLeads.filter(l => l.funil_id === currentFunnel);
       }
 
       if (leadsToCopy.length === 0) {
-        showToast('Sem contatos', 'Nenhum lead encontrado para copiar.', 'warning');
+        showToast('Sem contatos', 'Nenhum lead encontrado para copiar no período selecionado.', 'warning');
         return;
       }
 
