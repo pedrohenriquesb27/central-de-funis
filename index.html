@@ -264,46 +264,46 @@
             <span id="funnelCount-all" class="px-2.5 py-1 rounded-full text-xs font-black bg-white/20 text-white ml-2 shrink-0">0</span>
           </button>
 
-          <!-- Aba 2: Prosperus Principal -->
+          <!-- Aba 2: Funil 1: Prosperus Principal -->
           <button onclick="setFunnelTab('prosperus_principal')" id="funnel-tab-prosperus_principal"
             class="funnel-btn flex items-center justify-between p-3.5 rounded-xl border border-gray-200 hover:border-gray-300 bg-gray-50/70 hover:bg-gray-100/60 text-gray-700 transition text-left">
             <div class="flex items-center gap-3 min-w-0">
-              <div class="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-700 flex items-center justify-center text-sm shrink-0">
-                <i class="fa-solid fa-building-columns"></i>
+              <div class="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-700 flex items-center justify-center text-sm shrink-0 font-bold">
+                1
               </div>
               <div class="truncate">
-                <p class="text-xs font-extrabold truncate">Prosperus Principal</p>
+                <p class="text-xs font-extrabold truncate">Funil 1: Prosperus Principal</p>
                 <p class="text-[11px] text-gray-500 truncate">prosperusif.com.br</p>
               </div>
             </div>
             <span id="funnelCount-prosperus_principal" class="px-2.5 py-1 rounded-full text-xs font-black bg-gray-200 text-gray-700 ml-2 shrink-0">0</span>
           </button>
 
-          <!-- Aba 3: Prosperus Funil 02 -->
+          <!-- Aba 3: Funil 2: Prosperus Funil 02 -->
           <button onclick="setFunnelTab('prosperus_funil_02')" id="funnel-tab-prosperus_funil_02"
             class="funnel-btn flex items-center justify-between p-3.5 rounded-xl border border-gray-200 hover:border-gray-300 bg-gray-50/70 hover:bg-gray-100/60 text-gray-700 transition text-left">
             <div class="flex items-center gap-3 min-w-0">
-              <div class="w-9 h-9 rounded-lg bg-amber-500/10 text-amber-700 flex items-center justify-center text-sm shrink-0">
-                <i class="fa-solid fa-bolt"></i>
+              <div class="w-9 h-9 rounded-lg bg-amber-500/10 text-amber-700 flex items-center justify-center text-sm shrink-0 font-bold">
+                2
               </div>
               <div class="truncate">
-                <p class="text-xs font-extrabold truncate">Prosperus Funil 02</p>
+                <p class="text-xs font-extrabold truncate">Funil 2: Prosperus Funil 02</p>
                 <p class="text-[11px] text-gray-500 truncate">prosperus-02.vercel.app</p>
               </div>
             </div>
             <span id="funnelCount-prosperus_funil_02" class="px-2.5 py-1 rounded-full text-xs font-black bg-gray-200 text-gray-700 ml-2 shrink-0">0</span>
           </button>
 
-          <!-- Aba 4: Quiz Prosperus -->
+          <!-- Aba 4: Funil 3: Quiz Prosperus -->
           <button onclick="setFunnelTab('quiz_prosperus')" id="funnel-tab-quiz_prosperus"
             class="funnel-btn flex items-center justify-between p-3.5 rounded-xl border border-gray-200 hover:border-gray-300 bg-gray-50/70 hover:bg-gray-100/60 text-gray-700 transition text-left">
             <div class="flex items-center gap-3 min-w-0">
-              <div class="w-9 h-9 rounded-lg bg-purple-500/10 text-purple-700 flex items-center justify-center text-sm shrink-0">
-                <i class="fa-solid fa-clipboard-question"></i>
+              <div class="w-9 h-9 rounded-lg bg-purple-500/10 text-purple-700 flex items-center justify-center text-sm shrink-0 font-bold">
+                3
               </div>
               <div class="truncate">
-                <p class="text-xs font-extrabold truncate">Quiz Prosperus</p>
-                <p class="text-[11px] text-gray-500 truncate">Check-up 7 Etapas</p>
+                <p class="text-xs font-extrabold truncate">Funil 3: Quiz Prosperus</p>
+                <p class="text-[11px] text-gray-500 truncate">prosperus-quiz.vercel.app</p>
               </div>
             </div>
             <span id="funnelCount-quiz_prosperus" class="px-2.5 py-1 rounded-full text-xs font-black bg-gray-200 text-gray-700 ml-2 shrink-0">0</span>
@@ -313,128 +313,198 @@
       </div>
 
       <!-- ========================================================================= -->
-      <!-- 4. BLOCO COMPARATIVO DE PÁGINAS DE VENDAS (CHECKOUT)                      -->
+      <!-- 4. VISÃO GERAL: OS 3 FUNIS ORGANIZADOS EM ORDEM (Exibido na Visão Geral)  -->
       <!-- ========================================================================= -->
-      <div id="comparativeSection" class="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm space-y-5">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-gray-100">
+      <div id="overviewFunnelsGrid" class="space-y-4">
+        <div class="flex items-center justify-between">
           <div>
-            <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-[#C59B27]/15 text-[#8c6b12] border border-[#C59B27]/30">
-                Comparativo Direto
-              </span>
-              <span class="text-xs text-gray-400">• Conversão de Checkout</span>
-            </div>
-            <h2 class="text-lg font-extrabold text-[#062E20] mt-1 flex items-center gap-2">
-              <i class="fa-solid fa-scale-balanced text-[#C59B27]"></i>
-              <span>Prosperus Principal vs. Prosperus Funil 02</span>
+            <h2 class="text-base font-extrabold text-[#062E20] flex items-center gap-2">
+              <i class="fa-solid fa-layer-group text-[#C59B27]"></i>
+              <span>Desempenho dos Funis de Vendas (Em Ordem)</span>
             </h2>
-            <p class="text-xs text-gray-500 mt-0.5">
-              Análise comparativa de geração de cadastros (Nome e Telefone) nas páginas de checkout e taxa de vendas.
+            <p class="text-xs text-gray-500">
+              Clique em qualquer um dos funis para isolar e ver exclusivamente os dados dele.
             </p>
           </div>
-
-          <div id="comparativeWinnerBadge" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-extrabold">
-            <i class="fa-solid fa-trophy text-amber-500"></i>
-            <span id="winnerBadgeText">Aguardando dados...</span>
-          </div>
+          <span class="text-xs text-gray-400 font-medium hidden sm:inline">3 Funis Conectados</span>
         </div>
 
-        <!-- Barra Visual Comparativa de Checkouts -->
-        <div class="space-y-2">
-          <div class="flex justify-between text-xs font-bold text-gray-600">
-            <span class="flex items-center gap-1.5 text-emerald-800">
-              <span class="w-3 h-3 rounded-full bg-emerald-600 inline-block"></span>
-              <span>Prosperus Principal: <strong id="barLabelPrincipal">0 (0%)</strong></span>
-            </span>
-            <span class="flex items-center gap-1.5 text-amber-800">
-              <span class="w-3 h-3 rounded-full bg-[#C59B27] inline-block"></span>
-              <span>Prosperus Funil 02: <strong id="barLabelFunil02">0 (0%)</strong></span>
-            </span>
-          </div>
-
-          <div class="w-full h-4 bg-gray-100 rounded-full overflow-hidden flex shadow-inner">
-            <div id="barWidthPrincipal" class="bg-emerald-600 h-full transition-all duration-500" style="width: 50%;"></div>
-            <div id="barWidthFunil02" class="bg-[#C59B27] h-full transition-all duration-500" style="width: 50%;"></div>
-          </div>
-        </div>
-
-        <!-- Cards Lado a Lado das Duas Páginas -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+        <!-- Grid dos 3 Funis em Ordem -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           
-          <!-- Box Página 1: Prosperus Principal -->
-          <div class="bg-gradient-to-br from-emerald-50/60 to-white p-5 rounded-2xl border border-emerald-200/80 shadow-xs relative overflow-hidden">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-xl bg-emerald-700 text-white flex items-center justify-center text-xs font-bold shadow-xs">
-                  <i class="fa-solid fa-building-columns"></i>
+          <!-- Funil 1: Prosperus Principal -->
+          <div class="bg-gradient-to-br from-emerald-50/70 to-white p-5 rounded-2xl border border-emerald-200/90 shadow-xs flex flex-col justify-between hover:shadow-md transition">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-xl bg-emerald-700 text-white flex items-center justify-center text-xs font-bold shadow-xs">
+                    1
+                  </div>
+                  <div>
+                    <h3 class="text-sm font-extrabold text-[#062E20]">Funil 1: Prosperus Principal</h3>
+                    <a href="https://www.prosperusif.com.br/" target="_blank" rel="noopener" class="text-[11px] text-emerald-700 hover:underline flex items-center gap-1 font-semibold">
+                      <span>www.prosperusif.com.br</span>
+                      <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                    </a>
+                  </div>
                 </div>
-                <div>
-                  <h3 class="text-sm font-extrabold text-[#062E20]">Prosperus Principal</h3>
-                  <a href="https://www.prosperusif.com.br/" target="_blank" rel="noopener" class="text-[11px] text-emerald-700 hover:underline flex items-center gap-1 font-semibold">
-                    <span>www.prosperusif.com.br</span>
-                    <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
-                  </a>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300">Oficial</span>
+              </div>
+
+              <div class="grid grid-cols-3 gap-2 pt-3 border-t border-emerald-100 text-center my-3">
+                <div class="bg-white p-2 rounded-xl border border-emerald-100">
+                  <span class="text-[9px] uppercase font-bold text-gray-400 block">Checkouts</span>
+                  <span id="overviewCheckoutsPrincipal" class="text-lg font-extrabold text-emerald-800">0</span>
+                  <span class="text-[9px] text-gray-500">Nome/Tel</span>
+                </div>
+                <div class="bg-white p-2 rounded-xl border border-emerald-100">
+                  <span class="text-[9px] uppercase font-bold text-gray-400 block">Vendas</span>
+                  <span id="overviewVendasPrincipal" class="text-lg font-extrabold text-emerald-800">0</span>
+                  <span id="overviewTaxaPrincipal" class="text-[9px] text-emerald-600 font-bold">0%</span>
+                </div>
+                <div class="bg-white p-2 rounded-xl border border-emerald-100">
+                  <span class="text-[9px] uppercase font-bold text-gray-400 block">Receita</span>
+                  <span id="overviewReceitaPrincipal" class="text-xs font-extrabold text-emerald-800 mt-1 block">R$ 0</span>
+                  <span class="text-[9px] text-gray-400">Total</span>
                 </div>
               </div>
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300">Oficial</span>
             </div>
 
-            <div class="grid grid-cols-3 gap-2.5 pt-2 border-t border-emerald-100 text-center">
-              <div class="bg-white p-2.5 rounded-xl border border-emerald-100">
-                <span class="text-[10px] uppercase font-bold text-gray-400 block">Checkouts</span>
-                <span id="compCheckoutsPrincipal" class="text-xl font-extrabold text-emerald-800">0</span>
-                <span class="text-[10px] text-gray-500 block">Nome/Telefone</span>
+            <button onclick="setFunnelTab('prosperus_principal')"
+              class="w-full mt-2 py-2.5 px-3 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
+              <span>Ver Somente Funil 1</span>
+              <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </button>
+          </div>
+
+          <!-- Funil 2: Prosperus Funil 02 -->
+          <div class="bg-gradient-to-br from-amber-50/70 to-white p-5 rounded-2xl border border-amber-200/90 shadow-xs flex flex-col justify-between hover:shadow-md transition">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-xl bg-[#C59B27] text-white flex items-center justify-center text-xs font-bold shadow-xs">
+                    2
+                  </div>
+                  <div>
+                    <h3 class="text-sm font-extrabold text-[#062E20]">Funil 2: Prosperus Funil 02</h3>
+                    <a href="https://prosperus-02.vercel.app/" target="_blank" rel="noopener" class="text-[11px] text-amber-700 hover:underline flex items-center gap-1 font-semibold">
+                      <span>prosperus-02.vercel.app</span>
+                      <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                    </a>
+                  </div>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-800 border border-amber-300">Pág. Vendas 2</span>
               </div>
-              <div class="bg-white p-2.5 rounded-xl border border-emerald-100">
-                <span class="text-[10px] uppercase font-bold text-gray-400 block">Vendas</span>
-                <span id="compVendasPrincipal" class="text-xl font-extrabold text-emerald-800">0</span>
-                <span class="text-[10px] text-emerald-600 font-bold block" id="compTaxaPrincipal">0%</span>
+
+              <div class="grid grid-cols-3 gap-2 pt-3 border-t border-amber-100 text-center my-3">
+                <div class="bg-white p-2 rounded-xl border border-amber-100">
+                  <span class="text-[9px] uppercase font-bold text-gray-400 block">Checkouts</span>
+                  <span id="overviewCheckoutsFunil02" class="text-lg font-extrabold text-amber-900">0</span>
+                  <span class="text-[9px] text-gray-500">Nome/Tel</span>
+                </div>
+                <div class="bg-white p-2 rounded-xl border border-amber-100">
+                  <span class="text-[9px] uppercase font-bold text-gray-400 block">Vendas</span>
+                  <span id="overviewVendasFunil02" class="text-lg font-extrabold text-amber-900">0</span>
+                  <span id="overviewTaxaFunil02" class="text-[9px] text-amber-700 font-bold">0%</span>
+                </div>
+                <div class="bg-white p-2 rounded-xl border border-amber-100">
+                  <span class="text-[9px] uppercase font-bold text-gray-400 block">Receita</span>
+                  <span id="overviewReceitaFunil02" class="text-xs font-extrabold text-amber-900 mt-1 block">R$ 0</span>
+                  <span class="text-[9px] text-gray-400">Total</span>
+                </div>
               </div>
-              <div class="bg-white p-2.5 rounded-xl border border-emerald-100">
-                <span class="text-[10px] uppercase font-bold text-gray-400 block">Receita</span>
-                <span id="compReceitaPrincipal" class="text-base font-extrabold text-emerald-800 mt-1 block">R$ 0</span>
-                <span class="text-[10px] text-gray-400 block">Faturado</span>
+            </div>
+
+            <button onclick="setFunnelTab('prosperus_funil_02')"
+              class="w-full mt-2 py-2.5 px-3 bg-[#C59B27] hover:bg-[#b0881e] text-white text-xs font-bold rounded-xl transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
+              <span>Ver Somente Funil 2</span>
+              <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </button>
+          </div>
+
+          <!-- Funil 3: Quiz Prosperus -->
+          <div class="bg-gradient-to-br from-purple-50/70 to-white p-5 rounded-2xl border border-purple-200/90 shadow-xs flex flex-col justify-between hover:shadow-md transition">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-xl bg-purple-700 text-white flex items-center justify-center text-xs font-bold shadow-xs">
+                    3
+                  </div>
+                  <div>
+                    <h3 class="text-sm font-extrabold text-[#062E20]">Funil 3: Quiz Prosperus</h3>
+                    <a href="https://prosperus-quiz.vercel.app/" target="_blank" rel="noopener" class="text-[11px] text-purple-700 hover:underline flex items-center gap-1 font-semibold">
+                      <span>prosperus-quiz.vercel.app</span>
+                      <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                    </a>
+                  </div>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-purple-100 text-purple-800 border border-purple-300">Quiz 7 Etapas</span>
+              </div>
+
+              <div class="grid grid-cols-3 gap-2 pt-3 border-t border-purple-100 text-center my-3">
+                <div class="bg-white p-2 rounded-xl border border-purple-100">
+                  <span class="text-[9px] uppercase font-bold text-gray-400 block">Formulário</span>
+                  <span id="overviewFormulariosQuiz" class="text-lg font-extrabold text-purple-800">0</span>
+                  <span class="text-[9px] text-gray-500">Respostas</span>
+                </div>
+                <div class="bg-white p-2 rounded-xl border border-purple-100">
+                  <span class="text-[9px] uppercase font-bold text-gray-400 block">Checkouts</span>
+                  <span id="overviewCheckoutsQuiz" class="text-lg font-extrabold text-purple-800">0</span>
+                  <span class="text-[9px] text-purple-600 font-bold">Iniciou</span>
+                </div>
+                <div class="bg-white p-2 rounded-xl border border-purple-100">
+                  <span class="text-[9px] uppercase font-bold text-gray-400 block">Vendas</span>
+                  <span id="overviewVendasQuiz" class="text-lg font-extrabold text-purple-800">0</span>
+                  <span class="text-[9px] text-purple-600 font-bold">Comprou</span>
+                </div>
+              </div>
+            </div>
+
+            <button onclick="setFunnelTab('quiz_prosperus')"
+              class="w-full mt-2 py-2.5 px-3 bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold rounded-xl transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
+              <span>Ver Somente Funil 3 (Quiz)</span>
+              <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- BANNER DO FUNIL ISOLADO (Exibido quando um funil individual é selecionado)-->
+      <!-- ========================================================================= -->
+      <div id="activeFunnelBanner" class="hidden bg-white p-5 rounded-2xl border border-gray-200/90 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-3.5">
+            <div id="activeFunnelIconBox" class="w-12 h-12 rounded-2xl bg-[#062E20] text-[#C59B27] flex items-center justify-center text-xl shadow-xs shrink-0">
+              <i class="fa-solid fa-filter" id="activeFunnelIcon"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span id="activeFunnelBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300">
+                  Funil Ativo
+                </span>
+                <span class="text-xs text-gray-400">• Filtro Exclusivo</span>
+              </div>
+              <h2 id="activeFunnelTitle" class="text-xl font-extrabold text-[#062E20] mt-0.5">
+                Funil 1: Prosperus Principal
+              </h2>
+              <div class="flex items-center gap-2 mt-1">
+                <p class="text-xs text-gray-500">Exibindo exclusivamente as métricas e leads deste funil.</p>
+                <span class="text-gray-300">•</span>
+                <a id="activeFunnelLink" href="#" target="_blank" rel="noopener" class="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1">
+                  <span id="activeFunnelDomain">prosperusif.com.br</span>
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
               </div>
             </div>
           </div>
 
-          <!-- Box Página 2: Prosperus Funil 02 -->
-          <div class="bg-gradient-to-br from-amber-50/60 to-white p-5 rounded-2xl border border-amber-200/80 shadow-xs relative overflow-hidden">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-xl bg-[#C59B27] text-white flex items-center justify-center text-xs font-bold shadow-xs">
-                  <i class="fa-solid fa-bolt"></i>
-                </div>
-                <div>
-                  <h3 class="text-sm font-extrabold text-[#062E20]">Prosperus Funil 02</h3>
-                  <a href="https://prosperus-02.vercel.app/" target="_blank" rel="noopener" class="text-[11px] text-amber-700 hover:underline flex items-center gap-1 font-semibold">
-                    <span>prosperus-02.vercel.app</span>
-                    <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
-                  </a>
-                </div>
-              </div>
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-800 border border-amber-300">Alternativa</span>
-            </div>
-
-            <div class="grid grid-cols-3 gap-2.5 pt-2 border-t border-amber-100 text-center">
-              <div class="bg-white p-2.5 rounded-xl border border-amber-100">
-                <span class="text-[10px] uppercase font-bold text-gray-400 block">Checkouts</span>
-                <span id="compCheckoutsFunil02" class="text-xl font-extrabold text-amber-900">0</span>
-                <span class="text-[10px] text-gray-500 block">Nome/Telefone</span>
-              </div>
-              <div class="bg-white p-2.5 rounded-xl border border-amber-100">
-                <span class="text-[10px] uppercase font-bold text-gray-400 block">Vendas</span>
-                <span id="compVendasFunil02" class="text-xl font-extrabold text-amber-900">0</span>
-                <span class="text-[10px] text-amber-700 font-bold block" id="compTaxaFunil02">0%</span>
-              </div>
-              <div class="bg-white p-2.5 rounded-xl border border-amber-100">
-                <span class="text-[10px] uppercase font-bold text-gray-400 block">Receita</span>
-                <span id="compReceitaFunil02" class="text-base font-extrabold text-amber-900 mt-1 block">R$ 0</span>
-                <span class="text-[10px] text-gray-400 block">Faturado</span>
-              </div>
-            </div>
-          </div>
-
+          <button onclick="setFunnelTab('all')" 
+            class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl transition flex items-center justify-center gap-2 border border-gray-200 shrink-0 cursor-pointer">
+            <i class="fa-solid fa-arrow-left text-[11px]"></i>
+            <span>Voltar para Visão Geral</span>
+          </button>
         </div>
       </div>
 
@@ -1049,7 +1119,7 @@
         document.getElementById('syncStatusText').innerText = `Online (${allLeads.length} leads)`;
 
         updateFunnelTabCounts();
-        renderComparativeData();
+        renderOverviewFunnelsData();
         applyFiltersAndRender();
         showToast('Dados Atualizados', `${allLeads.length} leads sincronizados com o Supabase.`);
 
@@ -1075,21 +1145,27 @@
       document.getElementById('funnelCount-quiz_prosperus').innerText = countQuiz;
     }
 
-    // 4. ATUALIZA O CARD COMPARATIVO DE PÁGINAS DE VENDAS (CHECKOUT)
-    function renderComparativeData() {
-      // Filtra leads das duas páginas de vendas
+    // 4. ATUALIZA OS CARDS DO RESUMO DOS 3 FUNIS EM ORDEM (VISÃO GERAL)
+    function renderOverviewFunnelsData() {
+      // Funil 1: Prosperus Principal
       const leadsPrincipal = allLeads.filter(l => l.funil_id === 'prosperus_principal');
-      const leadsFunil02 = allLeads.filter(l => l.funil_id === 'prosperus_funil_02');
-
-      // Cadastros no checkout (Iniciou Checkout + Comprou)
       const checkoutsPrincipal = leadsPrincipal.filter(l => l.status_lead === 'Iniciou Checkout' || l.status_lead === 'Comprou' || l.status_lead === 'Aguardando Pagamento').length;
-      const checkoutsFunil02 = leadsFunil02.filter(l => l.status_lead === 'Iniciou Checkout' || l.status_lead === 'Comprou' || l.status_lead === 'Aguardando Pagamento').length;
-
-      // Vendas Aprovadas
       const vendasPrincipal = leadsPrincipal.filter(l => l.status_lead === 'Comprou').length;
-      const vendasFunil02 = leadsFunil02.filter(l => l.status_lead === 'Comprou').length;
+      const taxaPrincipal = checkoutsPrincipal > 0 ? ((vendasPrincipal / checkoutsPrincipal) * 100).toFixed(0) : '0';
 
-      // Faturamento somado
+      // Funil 2: Prosperus Funil 02
+      const leadsFunil02 = allLeads.filter(l => l.funil_id === 'prosperus_funil_02');
+      const checkoutsFunil02 = leadsFunil02.filter(l => l.status_lead === 'Iniciou Checkout' || l.status_lead === 'Comprou' || l.status_lead === 'Aguardando Pagamento').length;
+      const vendasFunil02 = leadsFunil02.filter(l => l.status_lead === 'Comprou').length;
+      const taxaFunil02 = checkoutsFunil02 > 0 ? ((vendasFunil02 / checkoutsFunil02) * 100).toFixed(0) : '0';
+
+      // Funil 3: Quiz Prosperus
+      const leadsQuiz = allLeads.filter(l => l.funil_id === 'quiz_prosperus');
+      const formQuiz = leadsQuiz.filter(l => l.status_lead === 'Preencheu Formulário').length;
+      const checkoutsQuiz = leadsQuiz.filter(l => l.status_lead === 'Iniciou Checkout' || l.status_lead === 'Comprou' || l.status_lead === 'Aguardando Pagamento').length;
+      const vendasQuiz = leadsQuiz.filter(l => l.status_lead === 'Comprou').length;
+
+      // Cálculo de faturamento
       const calcReceita = (leads) => {
         let sum = 0;
         leads.forEach(l => {
@@ -1104,57 +1180,33 @@
       const receitaPrincipal = calcReceita(leadsPrincipal);
       const receitaFunil02 = calcReceita(leadsFunil02);
 
-      // Taxas de conversão
-      const taxaPrincipal = checkoutsPrincipal > 0 ? ((vendasPrincipal / checkoutsPrincipal) * 100).toFixed(1) : '0.0';
-      const taxaFunil02 = checkoutsFunil02 > 0 ? ((vendasFunil02 / checkoutsFunil02) * 100).toFixed(1) : '0.0';
-
-      // Atualiza valores nos boxes
-      document.getElementById('compCheckoutsPrincipal').innerText = checkoutsPrincipal;
-      document.getElementById('compVendasPrincipal').innerText = vendasPrincipal;
-      document.getElementById('compTaxaPrincipal').innerText = `${taxaPrincipal}% conv.`;
-      document.getElementById('compReceitaPrincipal').innerText = receitaPrincipal > 0 
-        ? receitaPrincipal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-        : 'R$ 0,00';
-
-      document.getElementById('compCheckoutsFunil02').innerText = checkoutsFunil02;
-      document.getElementById('compVendasFunil02').innerText = vendasFunil02;
-      document.getElementById('compTaxaFunil02').innerText = `${taxaFunil02}% conv.`;
-      document.getElementById('compReceitaFunil02').innerText = receitaFunil02 > 0 
-        ? receitaFunil02.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-        : 'R$ 0,00';
-
-      // Barra visual de proporção de checkouts
-      const totalCheckoutsSales = checkoutsPrincipal + checkoutsFunil02;
-      let pctPrincipal = 50;
-      let pctFunil02 = 50;
-      if (totalCheckoutsSales > 0) {
-        pctPrincipal = Math.round((checkoutsPrincipal / totalCheckoutsSales) * 100);
-        pctFunil02 = 100 - pctPrincipal;
+      // Atualiza os elementos na tela
+      if (document.getElementById('overviewCheckoutsPrincipal')) {
+        document.getElementById('overviewCheckoutsPrincipal').innerText = checkoutsPrincipal;
+        document.getElementById('overviewVendasPrincipal').innerText = vendasPrincipal;
+        document.getElementById('overviewTaxaPrincipal').innerText = `${taxaPrincipal}% conv.`;
+        document.getElementById('overviewReceitaPrincipal').innerText = receitaPrincipal > 0
+          ? receitaPrincipal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+          : 'R$ 0,00';
       }
 
-      document.getElementById('barLabelPrincipal').innerText = `${checkoutsPrincipal} (${pctPrincipal}%)`;
-      document.getElementById('barLabelFunil02').innerText = `${checkoutsFunil02} (${pctFunil02}%)`;
-      document.getElementById('barWidthPrincipal').style.width = `${pctPrincipal}%`;
-      document.getElementById('barWidthFunil02').style.width = `${pctFunil02}%`;
+      if (document.getElementById('overviewCheckoutsFunil02')) {
+        document.getElementById('overviewCheckoutsFunil02').innerText = checkoutsFunil02;
+        document.getElementById('overviewVendasFunil02').innerText = vendasFunil02;
+        document.getElementById('overviewTaxaFunil02').innerText = `${taxaFunil02}% conv.`;
+        document.getElementById('overviewReceitaFunil02').innerText = receitaFunil02 > 0
+          ? receitaFunil02.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+          : 'R$ 0,00';
+      }
 
-      // Badge do vencedor
-      const badge = document.getElementById('comparativeWinnerBadge');
-      const badgeText = document.getElementById('winnerBadgeText');
-      if (checkoutsPrincipal > checkoutsFunil02) {
-        badge.classList.remove('hidden');
-        badgeText.innerText = 'Prosperus Principal lidera em Checkouts';
-      } else if (checkoutsFunil02 > checkoutsPrincipal) {
-        badge.classList.remove('hidden');
-        badgeText.innerText = 'Prosperus Funil 02 lidera em Checkouts';
-      } else if (totalCheckoutsSales > 0) {
-        badge.classList.remove('hidden');
-        badgeText.innerText = 'Desempenho empatado no Checkout';
-      } else {
-        badge.classList.add('hidden');
+      if (document.getElementById('overviewFormulariosQuiz')) {
+        document.getElementById('overviewFormulariosQuiz').innerText = formQuiz;
+        document.getElementById('overviewCheckoutsQuiz').innerText = checkoutsQuiz;
+        document.getElementById('overviewVendasQuiz').innerText = vendasQuiz;
       }
     }
 
-    // 5. ALTERNÂNCIA DE ABAS DE FUNIL
+    // 5. ALTERNÂNCIA DE ABAS DE FUNIL (ISOLAMENTO EXCLUSIVO)
     function setFunnelTab(funnelId) {
       currentFunnel = funnelId;
 
@@ -1172,6 +1224,73 @@
           if (countSpan) countSpan.className = 'px-2.5 py-1 rounded-full text-xs font-black bg-gray-200 text-gray-700 ml-2 shrink-0';
         }
       });
+
+      // Alterna exibição: Na Visão Geral mostra o Grid dos 3 funis. No Funil específico mostra Banner exclusivo!
+      const overviewGrid = document.getElementById('overviewFunnelsGrid');
+      const activeBanner = document.getElementById('activeFunnelBanner');
+
+      if (funnelId === 'all') {
+        if (overviewGrid) overviewGrid.classList.remove('hidden');
+        if (activeBanner) activeBanner.classList.add('hidden');
+      } else {
+        if (overviewGrid) overviewGrid.classList.add('hidden');
+        if (activeBanner) {
+          activeBanner.classList.remove('hidden');
+
+          const funnelMeta = {
+            prosperus_principal: {
+              title: 'Funil 1: Prosperus Principal',
+              badge: 'Funil 1 • Site Oficial',
+              url: 'https://www.prosperusif.com.br/',
+              domain: 'www.prosperusif.com.br',
+              icon: 'fa-building-columns',
+              badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300'
+            },
+            prosperus_funil_02: {
+              title: 'Funil 2: Prosperus Funil 02',
+              badge: 'Funil 2 • Página 02',
+              url: 'https://prosperus-02.vercel.app/',
+              domain: 'prosperus-02.vercel.app',
+              icon: 'fa-bolt',
+              badgeClass: 'bg-amber-100 text-amber-800 border-amber-300'
+            },
+            quiz_prosperus: {
+              title: 'Funil 3: Quiz Prosperus',
+              badge: 'Funil 3 • Quiz 7 Etapas',
+              url: 'https://prosperus-quiz.vercel.app/',
+              domain: 'prosperus-quiz.vercel.app',
+              icon: 'fa-clipboard-question',
+              badgeClass: 'bg-purple-100 text-purple-800 border-purple-300'
+            }
+          };
+
+          const currentMeta = funnelMeta[funnelId] || {
+            title: funnelId,
+            badge: 'Funil Ativo',
+            url: '#',
+            domain: '',
+            icon: 'fa-filter',
+            badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300'
+          };
+
+          document.getElementById('activeFunnelTitle').innerText = currentMeta.title;
+
+          const badgeEl = document.getElementById('activeFunnelBadge');
+          if (badgeEl) {
+            badgeEl.innerText = currentMeta.badge;
+            badgeEl.className = `px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border ${currentMeta.badgeClass}`;
+          }
+
+          const domainEl = document.getElementById('activeFunnelDomain');
+          if (domainEl) domainEl.innerText = currentMeta.domain;
+
+          const linkEl = document.getElementById('activeFunnelLink');
+          if (linkEl) linkEl.href = currentMeta.url;
+
+          const iconEl = document.getElementById('activeFunnelIcon');
+          if (iconEl) iconEl.className = `fa-solid ${currentMeta.icon}`;
+        }
+      }
 
       applyFiltersAndRender();
     }
@@ -1259,15 +1378,19 @@
       document.getElementById('metricComprou').innerText = comprouCount;
 
       const funnelTitles = {
-        all: 'Todos os Funis',
-        prosperus_principal: 'Prosperus Principal',
-        prosperus_funil_02: 'Prosperus Funil 02',
-        quiz_prosperus: 'Quiz Prosperus'
+        all: 'Consolidado Geral (3 Funis)',
+        prosperus_principal: 'Funil 1: Prosperus Principal',
+        prosperus_funil_02: 'Funil 2: Prosperus Funil 02',
+        quiz_prosperus: 'Funil 3: Quiz Prosperus'
       };
-      document.getElementById('metricTotalSubtitle').innerText = `Funil: ${funnelTitles[currentFunnel] || currentFunnel}`;
+      document.getElementById('metricTotalSubtitle').innerText = `${funnelTitles[currentFunnel] || currentFunnel}`;
 
-      const formRate = total > 0 ? ((formCount / total) * 100).toFixed(0) : '0';
-      document.getElementById('metricPreencheuRate').innerText = `${formRate}% dos leads`;
+      if (currentFunnel === 'prosperus_principal' || currentFunnel === 'prosperus_funil_02') {
+        document.getElementById('metricPreencheuRate').innerText = 'Direto ao Checkout';
+      } else {
+        const formRate = total > 0 ? ((formCount / total) * 100).toFixed(0) : '0';
+        document.getElementById('metricPreencheuRate').innerText = `${formRate}% dos leads`;
+      }
 
       const checkoutRate = total > 0 ? ((checkoutCount / total) * 100).toFixed(1) : '0';
       document.getElementById('metricCheckoutRate').innerText = `${checkoutRate}% conversão`;

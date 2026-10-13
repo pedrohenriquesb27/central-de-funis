@@ -34,8 +34,8 @@
     },
     prosperus_principal: {
       id: "prosperus_principal",
-      name: "Prosperus Principal",
-      shortName: "Prosperus Principal",
+      name: "Funil 1: Prosperus Principal",
+      shortName: "Funil 1: Principal",
       subtitle: "Página Oficial de Vendas",
       url: "https://www.prosperusif.com.br/",
       domain: "www.prosperusif.com.br",
@@ -48,7 +48,9 @@
         "site_oficial", 
         "landing_principal",
         "properus-vercel",
-        "funil_1"
+        "funil_1",
+        "funil 1",
+        "funil1"
       ],
       icon: "fa-building-columns",
       badgeClass: "bg-emerald-50 text-emerald-800 border-emerald-300",
@@ -57,8 +59,8 @@
     },
     prosperus_funil_02: {
       id: "prosperus_funil_02",
-      name: "Prosperus Funil 02",
-      shortName: "Prosperus Funil 02",
+      name: "Funil 2: Prosperus Funil 02",
+      shortName: "Funil 2: Funil 02",
       subtitle: "Página de Venda Alternativa",
       url: "https://prosperus-02.vercel.app/",
       domain: "prosperus-02.vercel.app",
@@ -72,7 +74,8 @@
         "prosperus_funil_02", 
         "venda", 
         "informativo_venda", 
-        "funil_2"
+        "funil_2",
+        "funil 2"
       ],
       icon: "fa-bolt",
       badgeClass: "bg-amber-50 text-amber-800 border-amber-300",
@@ -81,9 +84,9 @@
     },
     quiz_prosperus: {
       id: "quiz_prosperus",
-      name: "Quiz Prosperus",
-      shortName: "Quiz Prosperus",
-      subtitle: "Diagnóstico 7 Etapas",
+      name: "Funil 3: Quiz Prosperus",
+      shortName: "Funil 3: Quiz",
+      subtitle: "Diagnóstico Interativo 7 Etapas",
       url: "https://prosperus-quiz.vercel.app/",
       domain: "prosperus-quiz.vercel.app",
       aliases: [
@@ -91,7 +94,10 @@
         "quiz_prosperus", 
         "quiz-prosperus", 
         "checkup", 
-        "diagnostico"
+        "diagnostico",
+        "funil_3",
+        "funil 3",
+        "funil3"
       ],
       icon: "fa-clipboard-question",
       badgeClass: "bg-purple-50 text-purple-800 border-purple-200",
