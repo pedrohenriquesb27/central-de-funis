@@ -921,54 +921,229 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- 10. MODAL DE DETALHES COMPLETOS DO LEAD                                   -->
+  <!-- ========================================================================= -->
+  <!-- 10. MODAL DE DETALHES COMPLETOS DO LEAD & RESPOSTAS DO QUIZ               -->
   <!-- ========================================================================= -->
   <div id="detailsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm fade-in">
-    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-gray-200 overflow-hidden">
+    <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-gray-200 overflow-hidden">
       
-      <div class="bg-[#062E20] text-white p-5 flex items-center justify-between border-b border-[#C59B27]/30">
+      <!-- Cabeçalho do Modal -->
+      <div class="bg-[#062E20] text-white p-5 flex items-center justify-between border-b border-[#C59B27]/30 shrink-0">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#C59B27] font-serif text-lg font-bold border border-[#C59B27]/30">
             P
           </div>
           <div>
-            <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <h3 class="text-base font-bold text-white flex flex-wrap items-center gap-2">
               <span id="modalLeadNome">Nome do Lead</span>
               <span id="modalLeadBadgeFunil" class="px-2 py-0.5 rounded-full text-[10px] font-bold">Funil</span>
+              <span id="modalLeadQuizBadge" class="hidden px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#C59B27] text-[#062E20] flex items-center gap-1 shadow-xs">
+                <i class="fa-solid fa-clipboard-check"></i> Respostas do Quiz (7 Etapas)
+              </span>
             </h3>
-            <p class="text-xs text-gray-300">ID: <span id="modalLeadId" class="font-mono font-bold">-</span> • Criado em <span id="modalLeadCreatedAt">-</span></p>
+            <p class="text-xs text-gray-300 mt-0.5">ID: <span id="modalLeadId" class="font-mono font-bold">-</span> • Registrado em <span id="modalLeadCreatedAt">-</span></p>
           </div>
         </div>
-        <button onclick="closeDetailsModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition">
+        <button onclick="closeDetailsModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
+      <!-- Conteúdo com Scroll -->
       <div class="p-6 space-y-6 overflow-y-auto custom-scrollbar flex-1">
+        
+        <!-- 1. CONTATO E IDENTIFICAÇÃO -->
         <div>
-          <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-1.5">
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-2.5 flex items-center gap-1.5">
             <i class="fa-solid fa-address-card text-[#C59B27]"></i>
-            <span>Contato & Identificação</span>
+            <span>Contato & Identificação Básica</span>
           </h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-200/80">
             <div>
               <p class="text-[11px] font-bold text-gray-400 uppercase">WhatsApp / Telefone</p>
-              <div class="flex items-center gap-2 mt-0.5">
-                <span id="modalLeadPhone" class="font-bold text-sm text-[#062E20]">-</span>
-                <a id="modalLeadWaBtn" href="#" target="_blank" class="px-2 py-1 rounded bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition flex items-center gap-1">
-                  <i class="fa-brands fa-whatsapp"></i> Conversar
+              <div class="flex items-center gap-2 mt-1">
+                <span id="modalLeadPhone" class="font-bold text-sm text-[#062E20] font-mono">-</span>
+                <a id="modalLeadWaBtn" href="#" target="_blank" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition flex items-center gap-1.5 shadow-xs">
+                  <i class="fa-brands fa-whatsapp text-sm"></i> Chamar
                 </a>
               </div>
             </div>
             <div>
-              <p class="text-[11px] font-bold text-gray-400 uppercase">Documento / E-mail</p>
-              <p id="modalLeadDocEmail" class="font-bold text-sm text-[#062E20] mt-0.5 font-mono">-</p>
+              <p class="text-[11px] font-bold text-gray-400 uppercase">Documento / CPF / CNPJ</p>
+              <div class="flex items-center gap-2 mt-1">
+                <span id="modalLeadDocEmail" class="font-bold text-sm text-[#062E20] font-mono">-</span>
+                <button onclick="copyModalDoc()" title="Copiar documento" class="px-2 py-0.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded text-[11px] font-bold transition cursor-pointer flex items-center gap-1">
+                  <i class="fa-regular fa-copy text-[10px]"></i> Copiar
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
+        <!-- 2. RESPOSTAS OFICIAIS DO QUIZ (DIAGNÓSTICO FINANCEIRO) -->
+        <div id="modalQuizContainer" class="bg-gradient-to-br from-[#FDFBF7] to-white p-4 sm:p-5 rounded-2xl border-2 border-[#C59B27]/40 shadow-xs space-y-3.5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#C59B27]/20 gap-2">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-xl bg-[#062E20] text-[#C59B27] flex items-center justify-center text-sm font-bold shadow-xs shrink-0">
+                <i class="fa-solid fa-clipboard-question"></i>
+              </div>
+              <div>
+                <h4 class="text-xs sm:text-sm font-extrabold text-[#062E20] uppercase tracking-wide flex items-center gap-2">
+                  <span>Respostas do Quiz Financeiro</span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] bg-purple-100 text-purple-800 font-black">7 Etapas Preenchidas</span>
+                </h4>
+                <p class="text-[11px] text-gray-500 font-medium">Respostas completas declaradas pelo lead no diagnóstico antes do checkout:</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grid das 4 Perguntas Diagnósticas do Quiz -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            
+            <!-- Etapa 3: Faixa de Renda -->
+            <div class="bg-white p-3.5 rounded-xl border border-gray-200 shadow-xs space-y-1.5 hover:border-[#C59B27]/50 transition">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-black uppercase text-gray-400 flex items-center gap-1">
+                  <i class="fa-solid fa-coins text-[#C59B27]"></i> 3. Faixa de Renda Estimada
+                </span>
+                <span id="modalQuizRendaBadge" class="text-[9px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                  Potencial
+                </span>
+              </div>
+              <p id="modalQuizRenda" class="text-sm font-black text-[#062E20] leading-snug">-</p>
+              <p class="text-[10px] text-gray-400 italic">"Qual é a sua faixa de renda mensal estimada atual?"</p>
+            </div>
+
+            <!-- Etapa 4: Capacidade Mensal -->
+            <div class="bg-white p-3.5 rounded-xl border border-gray-200 shadow-xs space-y-1.5 hover:border-[#C59B27]/50 transition">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-black uppercase text-gray-400 flex items-center gap-1">
+                  <i class="fa-solid fa-calculator text-blue-600"></i> 4. Capacidade de Pagamento
+                </span>
+                <span id="modalQuizCapacidadeBadge" class="text-[9px] font-black px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">
+                  Análise
+                </span>
+              </div>
+              <p id="modalQuizCapacidade" class="text-sm font-black text-[#062E20] leading-snug">-</p>
+              <p class="text-[10px] text-gray-400 italic">"Sabe a capacidade de pagamento sem comprometer o orçamento?"</p>
+            </div>
+
+            <!-- Etapa 5: Monitoramento CPF -->
+            <div class="bg-white p-3.5 rounded-xl border border-gray-200 shadow-xs space-y-1.5 hover:border-[#C59B27]/50 transition">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-black uppercase text-gray-400 flex items-center gap-1">
+                  <i class="fa-solid fa-id-card text-amber-600"></i> 5. Monitoramento do CPF / Birôs
+                </span>
+                <span id="modalQuizCpfBadge" class="text-[9px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                  Alerta
+                </span>
+              </div>
+              <p id="modalQuizCpfAcomp" class="text-sm font-black text-[#062E20] leading-snug">-</p>
+              <p class="text-[10px] text-gray-400 italic">"Costuma consultar ou monitorar CPF e Score (Serasa/Boa Vista)?"</p>
+            </div>
+
+            <!-- Etapa 6: Relacionamento Bancário -->
+            <div class="bg-white p-3.5 rounded-xl border border-gray-200 shadow-xs space-y-1.5 hover:border-[#C59B27]/50 transition">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-black uppercase text-gray-400 flex items-center gap-1">
+                  <i class="fa-solid fa-building-columns text-purple-600"></i> 6. Instituições Bancárias Ativas
+                </span>
+                <span id="modalQuizBancosBadge" class="text-[9px] font-black px-2 py-0.5 rounded-full bg-purple-100 text-purple-800">
+                  Bancos
+                </span>
+              </div>
+              <p id="modalQuizBancos" class="text-sm font-black text-[#062E20] leading-snug">-</p>
+              <p class="text-[10px] text-gray-400 italic">"Possui relacionamento ativo com quantas instituições no momento?"</p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- AVISO QUANDO NÃO FOR LEAD DE QUIZ -->
+        <div id="modalNoQuizNotice" class="hidden bg-gray-50 p-4 rounded-2xl border border-gray-200 text-xs text-gray-600 flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-gray-200 text-gray-600 flex items-center justify-center shrink-0 text-base">
+            <i class="fa-solid fa-cart-shopping"></i>
+          </div>
+          <div>
+            <p class="font-bold text-[#062E20] text-sm">Origem Checkout Direto (Página de Vendas)</p>
+            <p class="text-[11px] text-gray-500 mt-0.5">Este lead veio diretamente da página de vendas principal e preencheu nome e telefone no formulário de pagamento, sem passar pelo quiz de diagnóstico de 7 etapas.</p>
+          </div>
+        </div>
+
+        <!-- 3. ESTRATÉGIA COMERCIAL & COMO COMUNICAR COM ESTE LEAD -->
+        <div id="modalStrategySection" class="bg-[#062E20] text-white p-4.5 rounded-2xl border border-[#C59B27]/40 shadow-sm space-y-2.5">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-lg bg-[#C59B27]/20 text-[#C59B27] flex items-center justify-center text-xs">
+              <i class="fa-solid fa-brain"></i>
+            </span>
+            <h4 class="text-xs font-black uppercase tracking-wider text-[#C59B27]">Como Comunicar com Este Lead (Estratégia de Venda)</h4>
+          </div>
+
+          <div class="space-y-2.5 text-xs">
+            <div class="bg-white/5 p-3 rounded-xl border border-white/10">
+              <p class="text-[10px] font-bold text-gray-300 uppercase tracking-wide">Perfil Identificado no Diagnóstico:</p>
+              <p id="modalStrategyProfile" class="font-medium text-gray-100 mt-1 leading-relaxed">-</p>
+            </div>
+            <div class="bg-[#C59B27]/10 p-3 rounded-xl border border-[#C59B27]/30">
+              <p class="text-[10px] font-black text-[#C59B27] uppercase tracking-wide">Ângulo / Gatilho de Abordagem Sugerido:</p>
+              <p id="modalStrategyHook" class="font-bold text-amber-100 mt-1 leading-relaxed">-</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. SCRIPT DE MENSAGEM PERSONALIZADO PARA WHATSAPP (1-CLIQUE) -->
+        <div id="modalScriptSection" class="bg-emerald-50/70 p-4.5 rounded-2xl border border-emerald-200/80 space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs">
+                <i class="fa-brands fa-whatsapp"></i>
+              </span>
+              <h4 class="text-xs font-black uppercase tracking-wider text-emerald-950">Script de WhatsApp Personalizado</h4>
+            </div>
+
+            <!-- Abas Rápidas de Abordagem -->
+            <div class="flex items-center gap-1 bg-white p-1 rounded-xl border border-emerald-200 text-[10px] font-bold">
+              <button onclick="setScriptTab('quiz')" id="script-tab-quiz" class="px-2.5 py-1 rounded-lg bg-emerald-700 text-white transition cursor-pointer">
+                Diagnóstico Quiz
+              </button>
+              <button onclick="setScriptTab('checkout')" id="script-tab-checkout" class="px-2.5 py-1 rounded-lg text-emerald-900 hover:bg-emerald-100 transition cursor-pointer">
+                Checkout / Pix
+              </button>
+              <button onclick="setScriptTab('rapido')" id="script-tab-rapido" class="px-2.5 py-1 rounded-lg text-emerald-900 hover:bg-emerald-100 transition cursor-pointer">
+                Rápido
+              </button>
+            </div>
+          </div>
+
+          <!-- Caixa de Texto do Script Editável -->
+          <textarea id="modalScriptText" rows="6" oninput="updateCustomScriptWaLink()"
+            class="w-full text-xs font-medium text-gray-800 bg-white border border-emerald-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans leading-relaxed shadow-inner"
+            placeholder="Carregando script sob medida..."></textarea>
+
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+            <div class="flex items-center gap-2">
+              <a id="modalScriptWaLink" href="#" target="_blank"
+                class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm cursor-pointer">
+                <i class="fa-brands fa-whatsapp text-sm"></i>
+                <span>Enviar pelo WhatsApp</span>
+              </a>
+
+              <button onclick="copyQuizScriptText()"
+                class="px-3.5 py-2 bg-white hover:bg-emerald-100 text-emerald-900 border border-emerald-300 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+                <i class="fa-regular fa-copy"></i>
+                <span id="copyScriptBtnText">Copiar Script</span>
+              </button>
+            </div>
+
+            <span class="text-[10px] text-emerald-800 font-semibold italic">
+              * Você pode editar o texto antes de enviar.
+            </span>
+          </div>
+        </div>
+
+        <!-- 5. ETAPA DO FUNIL & CONVERSÃO (ATUALIZAÇÃO RÁPIDA) -->
         <div>
-          <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-1.5">
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-2.5 flex items-center gap-1.5">
             <i class="fa-solid fa-pen-to-square text-[#C59B27]"></i>
             <span>Etapa do Funil & Conversão (Atualização Rápida)</span>
           </h4>
@@ -1001,7 +1176,7 @@
               </div>
               <div class="flex items-end">
                 <button onclick="saveLeadChanges()" id="btnSaveLead"
-                  class="w-full py-2 px-4 bg-[#062E20] hover:bg-[#042016] text-[#C59B27] rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 border border-[#C59B27]/40 shadow-sm">
+                  class="w-full py-2 px-4 bg-[#062E20] hover:bg-[#042016] text-[#C59B27] rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 border border-[#C59B27]/40 shadow-sm cursor-pointer">
                   <i class="fa-solid fa-floppy-disk"></i>
                   <span>Salvar Alterações</span>
                 </button>
@@ -1010,39 +1185,15 @@
           </div>
         </div>
 
-        <div>
-          <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-1.5">
-            <i class="fa-solid fa-list-check text-[#C59B27]"></i>
-            <span>Diagnóstico Financeiro & Campos Extras</span>
-          </h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-            <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
-              <span class="text-gray-400 block font-semibold text-[10px] uppercase">Faixa de Renda / Origem</span>
-              <span id="modalRenda" class="font-bold text-[#062E20]">-</span>
-            </div>
-            <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
-              <span class="text-gray-400 block font-semibold text-[10px] uppercase">Capacidade Mensal</span>
-              <span id="modalCapacidade" class="font-bold text-[#062E20]">-</span>
-            </div>
-            <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
-              <span class="text-gray-400 block font-semibold text-[10px] uppercase">Acompanha CPF?</span>
-              <span id="modalCpfAcomp" class="font-bold text-[#062E20]">-</span>
-            </div>
-            <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
-              <span class="text-gray-400 block font-semibold text-[10px] uppercase">Relacionamento Bancário</span>
-              <span id="modalBancos" class="font-bold text-[#062E20]">-</span>
-            </div>
-          </div>
-        </div>
-
       </div>
 
-      <div class="bg-gray-50 p-4 border-t border-gray-200 flex items-center justify-between">
-        <button onclick="copySingleLeadInfo()" class="px-3.5 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-bold transition flex items-center gap-1.5">
+      <!-- Rodapé do Modal -->
+      <div class="bg-gray-50 p-4 border-t border-gray-200 flex items-center justify-between shrink-0">
+        <button onclick="copySingleLeadInfo()" class="px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
           <i class="fa-regular fa-copy"></i>
-          <span>Copiar Dados</span>
+          <span>Copiar Todos os Dados</span>
         </button>
-        <button onclick="closeDetailsModal()" class="px-5 py-2 rounded-xl bg-gray-300 hover:bg-gray-400 text-gray-800 text-xs font-bold transition">
+        <button onclick="closeDetailsModal()" class="px-6 py-2 rounded-xl bg-gray-300 hover:bg-gray-400 text-gray-800 text-xs font-bold transition cursor-pointer">
           Fechar
         </button>
       </div>
@@ -1621,7 +1772,10 @@
           const docEmail = (l.email_documento || l.cpf_cnpj || l.documento || l.email || '').toLowerCase();
           const funnelId = (l.funil_id || '').toLowerCase();
           const renda = (l.faixa_renda || '').toLowerCase();
-          return name.includes(query) || phone.includes(query) || docEmail.includes(query) || funnelId.includes(query) || renda.includes(query);
+          const capacidade = (l.capacidade_mensal || '').toLowerCase();
+          const cpfAcomp = (l.acompanha_cpf || '').toLowerCase();
+          const bancos = (l.qtd_bancos || '').toLowerCase();
+          return name.includes(query) || phone.includes(query) || docEmail.includes(query) || funnelId.includes(query) || renda.includes(query) || capacidade.includes(query) || cpfAcomp.includes(query) || bancos.includes(query);
         });
       }
 
@@ -1742,13 +1896,42 @@
         const cleanPhone = rawPhone.replace(/\D/g, '');
         const formattedWaPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
         
+        const hasQuizAnswers = Boolean(lead.faixa_renda || lead.capacidade_mensal || lead.acompanha_cpf || lead.qtd_bancos || lead.funil_id === 'quiz_prosperus');
+
+        const quizPills = (lead.faixa_renda || lead.capacidade_mensal || lead.acompanha_cpf || lead.qtd_bancos) ? `
+          <div class="mt-1.5 flex flex-wrap items-center gap-1">
+            ${lead.faixa_renda ? `
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold" title="Renda Estimada: ${lead.faixa_renda}">
+                <i class="fa-solid fa-coins text-[#C59B27] text-[9px]"></i>
+                <span>${lead.faixa_renda}</span>
+              </span>` : ''}
+            ${lead.capacidade_mensal ? `
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-blue-800 border border-blue-200 text-[10px] font-bold" title="Capacidade Mensal: ${lead.capacidade_mensal}">
+                <i class="fa-solid fa-calculator text-blue-600 text-[9px]"></i>
+                <span class="truncate max-w-[130px]">${lead.capacidade_mensal}</span>
+              </span>` : ''}
+            ${lead.acompanha_cpf ? `
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-bold" title="Acompanhamento CPF: ${lead.acompanha_cpf}">
+                <i class="fa-solid fa-id-card text-amber-600 text-[9px]"></i>
+                <span class="truncate max-w-[120px]">${lead.acompanha_cpf}</span>
+              </span>` : ''}
+            ${lead.qtd_bancos ? `
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-purple-50 text-purple-800 border border-purple-200 text-[10px] font-bold" title="Instituições Bancárias: ${lead.qtd_bancos}">
+                <i class="fa-solid fa-building-columns text-purple-600 text-[9px]"></i>
+                <span>${lead.qtd_bancos}</span>
+              </span>` : ''}
+          </div>
+        ` : '';
+
         let waMsg = '';
         if (lead.status_lead === 'Comprou') {
           waMsg = encodeURIComponent(`Olá ${lead.nome || ''}! Parabéns pela aquisição do Check-up Prosperus! Seu relatório está pronto. Como podemos te ajudar hoje?`);
         } else if (lead.status_lead === 'Iniciou Checkout') {
           waMsg = encodeURIComponent(`Olá ${lead.nome || ''}! Vi que você iniciou seu pedido do Check-up Prosperus mas não concluiu o pagamento. Teve alguma dúvida no Pix ou Cartão?`);
+        } else if (lead.faixa_renda || lead.funil_id === 'quiz_prosperus') {
+          waMsg = encodeURIComponent(`Olá ${lead.nome || ''}! Aqui é da Prosperus Inteligência Financeira. Analisei seu diagnóstico preliminar (faturamento ${lead.faixa_renda || 'informado'} e relacionamento com ${lead.qtd_bancos || 'seus bancos'}). Gostaria de te apresentar os pontos que estão travando seus limites bancários. Tem 2 minutinhos?`);
         } else {
-          waMsg = encodeURIComponent(`Olá ${lead.nome || ''}! Vi que você preencheu o diagnóstico no Prosperus! Posso te auxiliar com as próximas etapas da sua análise?`);
+          waMsg = encodeURIComponent(`Olá ${lead.nome || ''}! Vi que você conheceu o Check-up Prosperus! Posso te auxiliar com as próximas etapas da sua análise de crédito?`);
         }
         const waLink = cleanPhone ? `https://wa.me/${formattedWaPhone}?text=${waMsg}` : '#';
 
@@ -1786,8 +1969,12 @@
             ${funnelBadge}
           </td>
           <td class="py-3.5 px-4">
-            <div class="font-bold text-[#062E20] leading-tight">${nomeLead}</div>
+            <div class="font-bold text-[#062E20] leading-tight flex items-center gap-1.5">
+              <span>${nomeLead}</span>
+              ${hasQuizAnswers ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-purple-100 text-purple-800 border border-purple-200 tracking-wider uppercase" title="Respondeu Quiz 7 Etapas">Quiz</span>` : ''}
+            </div>
             <div class="text-[11px] font-mono text-gray-400 mt-0.5 truncate max-w-xs">${docEmail}</div>
+            ${quizPills}
           </td>
           <td class="py-3.5 px-4 whitespace-nowrap">
             <div class="flex items-center gap-2">
@@ -1803,13 +1990,13 @@
           </td>
           <td class="py-3.5 px-4 text-center whitespace-nowrap">
             <div class="inline-flex items-center gap-1.5">
-              <button onclick="openLeadDetails(${lead.id})" title="Ver todos os dados do lead"
-                class="px-3 py-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-[#062E20] font-bold text-xs inline-flex items-center gap-1.5 transition">
+              <button onclick="openLeadDetails(${lead.id})" title="Ver respostas completas do quiz e análise"
+                class="px-3 py-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-[#062E20] font-bold text-xs inline-flex items-center gap-1.5 transition cursor-pointer">
                 <i class="fa-solid fa-eye text-[#C59B27]"></i>
                 <span>Detalhes</span>
               </button>
 
-              <a href="${waLink}" target="_blank" rel="noopener" title="Chamar no WhatsApp"
+              <a href="${waLink}" target="_blank" rel="noopener" title="Chamar no WhatsApp com mensagem do quiz"
                 class="px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs inline-flex items-center gap-1 shadow-sm transition">
                 <i class="fa-brands fa-whatsapp"></i>
               </a>
@@ -1834,7 +2021,188 @@
       setDateFilter('all');
     }
 
-    // 10. MODAL DE DETALHES DO LEAD
+    // 10. MODAL DE DETALHES DO LEAD & RESPOSTAS DO QUIZ
+    let currentScriptType = 'quiz';
+
+    function analyzeLeadQuizProfile(lead) {
+      if (!lead) return { profileText: '-', hookText: '-' };
+      const renda = (lead.faixa_renda || '').trim();
+      const capacidade = (lead.capacidade_mensal || '').trim();
+      const cpfAcomp = (lead.acompanha_cpf || '').trim();
+      const bancos = (lead.qtd_bancos || '').trim();
+
+      const hasQuiz = Boolean(renda || capacidade || cpfAcomp || bancos || lead.funil_id === 'quiz_prosperus');
+
+      if (!hasQuiz) {
+        return {
+          profileText: 'Lead de Venda Direta (Checkout). Cadastrou Nome e Telefone diretamente no formulário de pagamento da página de vendas, sem responder as etapas preliminares do quiz.',
+          hookText: '🛒 Gatilho: Verificar se teve alguma dificuldade com a forma de pagamento (Pix / Cartão) ou se deseja entender em detalhes os itens entregues no Check-up Prosperus.'
+        };
+      }
+
+      const isHighIncome = renda.includes('10.000');
+      const isMidIncome = renda.includes('6.001') || renda.includes('3.001');
+      const hasCapacidadeDoubts = capacidade.toLowerCase().includes('dúvidas') || capacidade.toLowerCase().includes('não sei');
+      const hasCapacidadeEstimate = capacidade.toLowerCase().includes('estimativa');
+      const rarelyChecksCpf = cpfAcomp.toLowerCase().includes('raramente') || cpfAcomp.toLowerCase().includes('nunca');
+      const sometimesChecksCpf = cpfAcomp.toLowerCase().includes('apenas quando preciso') || cpfAcomp.toLowerCase().includes('às vezes');
+      const manyBanks = bancos.toLowerCase().includes('mais de 3');
+      const fewBanks = bancos.toLowerCase().includes('2 a 3');
+
+      let profile = [];
+      if (isHighIncome) profile.push('Faturamento expressivo (Acima de R$ 10.000/mês - perfil PJ/PF de alto valor)');
+      else if (isMidIncome) profile.push('Renda mensal consolidada');
+      else if (renda) profile.push(`Faixa salarial: ${renda}`);
+
+      if (manyBanks) profile.push('Movimentação pulverizada em mais de 3 bancos (gera tarifas duplicadas e diluição de limites)');
+      else if (fewBanks) profile.push('Relacionamento ativo com 2 a 3 bancos');
+      else if (bancos) profile.push(`Relacionamento concentrado: ${bancos}`);
+
+      if (hasCapacidadeDoubts) profile.push('Incerteza na capacidade mensal de pagamento sem comprometer o orçamento');
+      else if (hasCapacidadeEstimate) profile.push('Apenas estimativa aproximada da margem financeira disponível');
+
+      if (rarelyChecksCpf) profile.push('Não costuma monitorar CPF nos birôs (elevado risco de restrições invisíveis no Registrato/SCR do BACEN)');
+      else if (sometimesChecksCpf) profile.push('Monitora CPF apenas esporadicamente');
+
+      const profileText = profile.length > 0 ? profile.join(' • ') : 'Lead com dados básicos do diagnóstico preenchidos.';
+
+      let hookText = '';
+      if (rarelyChecksCpf) {
+        hookText = '🚨 Gatilho Principal: Alerte sobre a "Trava Invisível" dos bancos no BACEN/SCR — mostre que notas internas de rating bloqueiam crédito mesmo com nome limpo.';
+      } else if (hasCapacidadeDoubts && isHighIncome) {
+        hookText = '💡 Gatilho Principal: Foque na auditoria de limites — mostre como quem fatura mais de R$ 10k costuma pagar juros abusivos por falta de organização de margem.';
+      } else if (manyBanks) {
+        hookText = '🏦 Gatilho Principal: Proponha a unificação estratégica de crédito — eliminar tarifas duplicadas em mais de 3 bancos e concentrar o melhor rating.';
+      } else {
+        hookText = '🎯 Gatilho Principal: Apresente o Check-up Prosperus como a análise sigilosa que revela o diagnóstico real antes de solicitar qualquer novo crédito.';
+      }
+
+      return { profileText, hookText };
+    }
+
+    function generateScriptContent(lead, type = 'quiz') {
+      if (!lead) return '';
+      const firstName = (lead.nome || 'Cliente').split(' ')[0];
+      const renda = lead.faixa_renda || 'informada';
+      const bancos = lead.qtd_bancos || 'seus bancos';
+      const capacidade = lead.capacidade_mensal || '';
+      const cpfAcomp = lead.acompanha_cpf || '';
+
+      if (type === 'checkout') {
+        return `Olá ${firstName}! Tudo bem? 🤝
+
+Aqui é da equipe Prosperus Inteligência Financeira.
+
+Vi que você iniciou o seu pedido do Check-up Prosperus mas não concluiu o pagamento na nossa página segura.
+
+Como você já preencheu suas informações, gostaria de saber se ficou com alguma dúvida sobre o relatório ou se teve alguma dificuldade com o Pix ou Cartão?
+
+Consigo te ajudar por aqui agora mesmo para você ter acesso à sua análise completa!`;
+      }
+
+      if (type === 'rapido') {
+        return `Olá ${firstName}! 
+
+Aqui é da Prosperus Inteligência Financeira. Recebemos o seu diagnóstico preliminar e separamos aqui os pontos de atenção do seu perfil bancário.
+
+Você teria 2 minutinhos para conversar agora sobre a liberação do seu Check-up completo?`;
+      }
+
+      // Default: 'quiz' (Diagnóstico completo baseado nas respostas!)
+      let pontoEspecifico = '';
+      if (capacidade.toLowerCase().includes('dúvidas') || capacidade.toLowerCase().includes('não sei')) {
+        pontoEspecifico = 'notamos que você marcou ter dúvidas sobre sua capacidade mensal de pagamento, o que costuma fazer os bancos travarem limites por precaução.';
+      } else if (cpfAcomp.toLowerCase().includes('raramente') || cpfAcomp.toLowerCase().includes('nunca')) {
+        pontoEspecifico = 'como você raramente consulta o seu CPF nos birôs, existe alto risco de restrições silenciosas na matriz do BACEN/SCR estarem prejudicando suas aprovações.';
+      } else if (bancos.toLowerCase().includes('mais de 3')) {
+        pontoEspecifico = 'como você possui relacionamento com mais de 3 bancos, sua movimentação financeira está pulverizada, gerando custos altos e diluição do seu rating de crédito.';
+      } else {
+        pontoEspecifico = 'identificamos fatores fundamentais que o algoritmo bancário avalia antes de liberar limites ou reduzir taxas de juros.';
+      }
+
+      return `Olá ${firstName}! Tudo bem? 🤝
+
+Aqui é da Prosperus Inteligência Financeira.
+
+Acabei de analisar o seu diagnóstico de crédito na nossa central. Vi que você informou renda na faixa de *${renda}* e relacionamento ativo com *${bancos}*.
+
+Analisando suas respostas, ${pontoEspecifico}
+
+O seu relatório do Check-up Prosperus está pronto para ser liberado e estruturar o seu perfil bancário.
+
+Você teria 2 minutinhos para falarmos sobre a liberação da sua análise?`;
+    }
+
+    function setScriptTab(type) {
+      currentScriptType = type;
+      if (!activeLeadForModal) return;
+
+      const tabs = ['quiz', 'checkout', 'rapido'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`script-tab-${t}`);
+        if (!btn) return;
+        if (t === type) {
+          btn.className = 'px-2.5 py-1 rounded-lg bg-emerald-700 text-white transition cursor-pointer font-bold';
+        } else {
+          btn.className = 'px-2.5 py-1 rounded-lg text-emerald-900 hover:bg-emerald-100 transition cursor-pointer font-bold';
+        }
+      });
+
+      const scriptText = generateScriptContent(activeLeadForModal, type);
+      const textEl = document.getElementById('modalScriptText');
+      if (textEl) textEl.value = scriptText;
+
+      updateCustomScriptWaLink();
+    }
+
+    function updateCustomScriptWaLink() {
+      if (!activeLeadForModal) return;
+      const textEl = document.getElementById('modalScriptText');
+      const waLinkEl = document.getElementById('modalScriptWaLink');
+      if (!textEl || !waLinkEl) return;
+
+      const text = textEl.value || '';
+      const rawPhone = activeLeadForModal.whatsapp || activeLeadForModal.telefone || '';
+      const cleanPhone = rawPhone.replace(/\D/g, '');
+      const formattedWaPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
+
+      if (cleanPhone) {
+        waLinkEl.href = `https://wa.me/${formattedWaPhone}?text=${encodeURIComponent(text)}`;
+        waLinkEl.classList.remove('opacity-50', 'pointer-events-none');
+      } else {
+        waLinkEl.href = '#';
+        waLinkEl.classList.add('opacity-50', 'pointer-events-none');
+      }
+    }
+
+    function copyQuizScriptText() {
+      const textEl = document.getElementById('modalScriptText');
+      if (!textEl || !textEl.value) return;
+      navigator.clipboard.writeText(textEl.value).then(() => {
+        const btnText = document.getElementById('copyScriptBtnText');
+        if (btnText) {
+          const orig = btnText.innerText;
+          btnText.innerText = 'Copiado!';
+          setTimeout(() => btnText.innerText = orig, 2500);
+        }
+        showToast('Script Copiado', 'Mensagem copiada para a área de transferência.');
+      }).catch(err => {
+        showToast('Erro ao Copiar', err.message, 'error');
+      });
+    }
+
+    function copyModalDoc() {
+      if (!activeLeadForModal) return;
+      const doc = activeLeadForModal.email_documento || activeLeadForModal.cpf_cnpj || activeLeadForModal.documento || '';
+      if (!doc) {
+        showToast('Aviso', 'Nenhum documento cadastrado para este lead.', 'warning');
+        return;
+      }
+      navigator.clipboard.writeText(doc).then(() => {
+        showToast('Documento Copiado', `Documento ${doc} copiado!`);
+      });
+    }
+
     function openLeadDetails(leadId) {
       const lead = allLeads.find(l => l.id === leadId);
       if (!lead) return;
@@ -1843,12 +2211,14 @@
 
       document.getElementById('modalLeadNome').innerText = lead.nome || 'Lead sem nome';
       document.getElementById('modalLeadId').innerText = `#${lead.id}`;
-      document.getElementById('modalLeadCreatedAt').innerText = lead.created_at ? new Date(lead.created_at).toLocaleString('pt-BR') : '-';
+      document.getElementById('modalLeadCreatedAt').innerText = lead.created_at ? new Date(lead.created_at).toLocaleString('pt-BR') : (lead.data_registro || '-');
       
       const funnelMeta = window.getFunnelMeta ? window.getFunnelMeta(lead.funil_id) : { name: lead.funil_id, badgeClass: 'bg-gray-100 text-gray-700' };
       const badgeEl = document.getElementById('modalLeadBadgeFunil');
-      badgeEl.className = `px-2 py-0.5 rounded-full text-[10px] font-bold border ${funnelMeta.badgeClass}`;
-      badgeEl.innerText = funnelMeta.name;
+      if (badgeEl) {
+        badgeEl.className = `px-2 py-0.5 rounded-full text-[10px] font-bold border ${funnelMeta.badgeClass}`;
+        badgeEl.innerText = funnelMeta.name;
+      }
 
       const rawPhone = lead.whatsapp || lead.telefone || 'Não informado';
       const cleanPhone = rawPhone.replace(/\D/g, '');
@@ -1864,14 +2234,107 @@
       }
 
       document.getElementById('modalLeadDocEmail').innerText = lead.email_documento || lead.cpf_cnpj || lead.documento || lead.email || '-';
+
+      // Verifica se o lead possui respostas do Quiz
+      const hasQuiz = Boolean(lead.faixa_renda || lead.capacidade_mensal || lead.acompanha_cpf || lead.qtd_bancos || lead.funil_id === 'quiz_prosperus');
+
+      const quizBadge = document.getElementById('modalLeadQuizBadge');
+      const quizContainer = document.getElementById('modalQuizContainer');
+      const noQuizNotice = document.getElementById('modalNoQuizNotice');
+
+      if (hasQuiz) {
+        if (quizBadge) quizBadge.classList.remove('hidden');
+        if (quizContainer) quizContainer.classList.remove('hidden');
+        if (noQuizNotice) noQuizNotice.classList.add('hidden');
+
+        // Preenche respostas detalhadas
+        document.getElementById('modalQuizRenda').innerText = lead.faixa_renda || 'Não informada';
+        document.getElementById('modalQuizCapacidade').innerText = lead.capacidade_mensal || 'Não informada';
+        document.getElementById('modalQuizCpfAcomp').innerText = lead.acompanha_cpf || 'Não informado';
+        document.getElementById('modalQuizBancos').innerText = lead.qtd_bancos || 'Não informado';
+
+        // Badges inteligentes de diagnóstico
+        const rendaBadge = document.getElementById('modalQuizRendaBadge');
+        if (rendaBadge) {
+          const r = (lead.faixa_renda || '').toLowerCase();
+          if (r.includes('10.000')) {
+            rendaBadge.innerText = '🔥 Alta Renda / Faturamento PJ';
+            rendaBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800';
+          } else if (r.includes('6.001')) {
+            rendaBadge.innerText = '⭐ Renda Consolidada';
+            rendaBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded-full bg-blue-100 text-blue-800';
+          } else if (r.includes('3.001')) {
+            rendaBadge.innerText = '💼 Renda Média';
+            rendaBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded-full bg-sky-100 text-sky-800';
+          } else {
+            rendaBadge.innerText = '🌱 Renda Inicial';
+            rendaBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded-full bg-gray-100 text-gray-700';
+          }
+        }
+
+        const capBadge = document.getElementById('modalQuizCapacidadeBadge');
+        if (capBadge) {
+          const c = (lead.capacidade_mensal || '').toLowerCase();
+          if (c.includes('dúvidas') || c.includes('não sei')) {
+            capBadge.innerText = '⚠️ Insegurança de Limite';
+            capBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded-full bg-red-100 text-red-800';
+          } else if (c.includes('estimativa')) {
+            capBadge.innerText = 'ℹ️ Estimativa Aproximada';
+            capBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-800';
+          } else {
+            capBadge.innerText = '✅ Orçamento Controlado';
+            capBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800';
+          }
+        }
+
+        const cpfBadge = document.getElementById('modalQuizCpfBadge');
+        if (cpfBadge) {
+          const cpf = (lead.acompanha_cpf || '').toLowerCase();
+          if (cpf.includes('raramente') || cpf.includes('nunca')) {
+            cpfBadge.innerText = '🚨 Risco Alto BACEN/SCR';
+            cpfBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded-full bg-red-100 text-red-800';
+          } else if (cpf.includes('apenas') || cpf.includes('às vezes')) {
+            cpfBadge.innerText = '⚠️ Monitora Ocasionalmente';
+            cpfBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-800';
+          } else {
+            cpfBadge.innerText = '✅ Monitoramento Regular';
+            cpfBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800';
+          }
+        }
+
+        const bancosBadge = document.getElementById('modalQuizBancosBadge');
+        if (bancosBadge) {
+          const b = (lead.qtd_bancos || '').toLowerCase();
+          if (b.includes('mais de 3')) {
+            bancosBadge.innerText = '🏦 Crédito Pulverizado (Alta Economia)';
+            bancosBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded-full bg-purple-100 text-purple-800';
+          } else if (b.includes('2 a 3')) {
+            bancosBadge.innerText = '🏦 2 a 3 Instituições Ativas';
+            bancosBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800';
+          } else {
+            bancosBadge.innerText = '🏦 1 Banco Concentrado';
+            bancosBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded-full bg-gray-100 text-gray-700';
+          }
+        }
+
+      } else {
+        if (quizBadge) quizBadge.classList.add('hidden');
+        if (quizContainer) quizContainer.classList.add('hidden');
+        if (noQuizNotice) noQuizNotice.classList.remove('hidden');
+      }
+
+      // Análise de Perfil e Estratégia Comercial
+      const analysis = analyzeLeadQuizProfile(lead);
+      document.getElementById('modalStrategyProfile').innerText = analysis.profileText;
+      document.getElementById('modalStrategyHook').innerText = analysis.hookText;
+
+      // Inicializa os scripts
+      setScriptTab(hasQuiz ? 'quiz' : 'checkout');
+
+      // Campos de edição rápida
       document.getElementById('modalEditStatus').value = lead.status_lead || 'Preencheu Formulário';
       document.getElementById('modalEditFunnel').value = lead.funil_id || 'prosperus_principal';
       document.getElementById('modalEditValor').value = lead.valor_pago || '';
-
-      document.getElementById('modalRenda').innerText = lead.faixa_renda || '-';
-      document.getElementById('modalCapacidade').innerText = lead.capacidade_mensal || '-';
-      document.getElementById('modalCpfAcomp').innerText = lead.acompanha_cpf || '-';
-      document.getElementById('modalBancos').innerText = lead.qtd_bancos || '-';
 
       document.getElementById('detailsModal').classList.remove('hidden');
     }
@@ -1927,8 +2390,6 @@
 
         showToast('Lead Atualizado', `Lead #${activeLeadForModal.id} atualizado com sucesso!`);
         closeDetailsModal();
-        updateFunnelTabCounts();
-        renderComparativeData();
         applyFiltersAndRender();
 
       } catch (err) {
@@ -1943,9 +2404,14 @@
     function copySingleLeadInfo() {
       if (!activeLeadForModal) return;
       const lead = activeLeadForModal;
-      const info = `Lead Prosperus: ${lead.nome || 'Sem nome'}\nWhatsApp: ${lead.whatsapp || '-'}\nDoc: ${lead.email_documento || '-'}\nFunil: ${lead.funil_id}\nStatus: ${lead.status_lead}`;
+      let info = `=== LEAD PROSPERUS ===\nNome: ${lead.nome || 'Sem nome'}\nWhatsApp: ${lead.whatsapp || '-'}\nDocumento: ${lead.email_documento || '-'}\nFunil de Origem: ${lead.funil_id}\nStatus: ${lead.status_lead}\nValor Pago: R$ ${lead.valor_pago || '0'}\n`;
+      
+      if (lead.faixa_renda || lead.capacidade_mensal || lead.acompanha_cpf || lead.qtd_bancos) {
+        info += `\n=== RESPOSTAS DO QUIZ FINANCEIRO ===\n3. Faixa de Renda: ${lead.faixa_renda || 'Não informada'}\n4. Capacidade Mensal: ${lead.capacidade_mensal || 'Não informada'}\n5. Acompanhamento CPF: ${lead.acompanha_cpf || 'Não informado'}\n6. Instituições Bancárias: ${lead.qtd_bancos || 'Não informado'}\n`;
+      }
+      
       navigator.clipboard.writeText(info).then(() => {
-        showToast('Copiado', 'Dados do lead copiados para a área de transferência.');
+        showToast('Copiado', 'Ficha completa do lead copiada para a área de transferência.');
       });
     }
 
