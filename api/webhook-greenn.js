@@ -1,6 +1,6 @@
 /**
  * Webhook Greenn - Central de Funis Prosperus
- * Endpoint Serverless na Vercel: /api/webhook-greenn
+ * Endpoint Serverless na Vercel: /api/webhook-greenn e /api/webhook
  * Recebe notificações da Greenn (Abandono de Checkout, Pix Gerado, Compra Aprovada)
  * e salva/atualiza os dados na tabela 'quiz_leads' do Supabase.
  */
@@ -49,26 +49,34 @@ function supabaseRequest(path, method = 'GET', body = null, extraHeaders = {}) {
 // Normalização inteligente do identificador de funil
 function resolveFunnelId(reqUrl, payload) {
   // 1. Checa query param na URL do webhook (?funil=...)
-  const urlObj = new URL(reqUrl, 'http://localhost');
-  const qFunil = urlObj.searchParams.get('funil') || urlObj.searchParams.get('funnel') || urlObj.searchParams.get('src');
-  if (qFunil) {
-    const qLower = qFunil.toLowerCase();
-    if (qLower.includes('02') || qLower.includes('funil2') || qLower.includes('funil-02')) return 'prosperus_funil_02';
-    if (qLower.includes('principal') || qLower.includes('site') || qLower.includes('prosperusif')) return 'prosperus_principal';
-    if (qLower.includes('quiz') || qLower.includes('checkup')) return 'quiz_prosperus';
-  }
+  try {
+    const urlObj = new URL(reqUrl, 'http://localhost');
+    const qFunil = urlObj.searchParams.get('funil') || urlObj.searchParams.get('funnel') || urlObj.searchParams.get('src');
+    if (qFunil) {
+      const qLower = qFunil.toLowerCase();
+      if (qLower.includes('02') || qLower.includes('funil2') || qLower.includes('funil-02')) return 'prosperus_funil_02';
+      if (qLower.includes('principal') || qLower.includes('site') || qLower.includes('prosperusif')) return 'prosperus_principal';
+      if (qLower.includes('quiz') || qLower.includes('checkup')) return 'quiz_prosperus';
+    }
+  } catch (e) {}
 
   // 2. Checa parâmetros passados no checkout da Greenn
+  let metasStr = '';
+  try {
+    if (payload.sale?.saleMetas) metasStr += ' ' + JSON.stringify(payload.sale.saleMetas);
+    if (payload.tracking) metasStr += ' ' + JSON.stringify(payload.tracking);
+  } catch (e) {}
+
   const trackingStr = [
     payload.src || '',
     payload.sck || '',
     payload.utm_source || '',
     payload.utm_campaign || '',
-    payload.tracking?.src || '',
     payload.producer_params || '',
     payload.offer_name || '',
     payload.product_name || '',
-    payload.url || ''
+    payload.url || '',
+    metasStr
   ].join(' ').toLowerCase();
 
   if (trackingStr.includes('prosperus-02') || trackingStr.includes('funil-02') || trackingStr.includes('funil02') || trackingStr.includes('prosperus_funil_02')) {
@@ -100,11 +108,12 @@ module.exports = async (req, res) => {
     return res.status(200).json({
       status: 'ok',
       service: 'Central de Funis - Greenn Webhook Endpoint',
-      description: 'Pronto para receber notificações de compra e abandono de carrinho da Greenn',
+      description: 'Pronto para receber notificações de compra, pix gerado e abandono de carrinho da Greenn',
       funnelUrls: {
         principal: 'https://central-de-funis-zeta.vercel.app/api/webhook-greenn?funil=prosperus_principal',
         funil_02: 'https://central-de-funis-zeta.vercel.app/api/webhook-greenn?funil=prosperus_funil_02',
-        quiz: 'https://central-de-funis-zeta.vercel.app/api/webhook-greenn?funil=quiz_prosperus'
+        quiz: 'https://central-de-funis-zeta.vercel.app/api/webhook-greenn?funil=quiz_prosperus',
+        aliasPrincipal: 'https://central-de-funis-zeta.vercel.app/api/webhook?funil=prosperus_principal'
       }
     });
   }
@@ -116,39 +125,68 @@ module.exports = async (req, res) => {
       console.log('🔔 [WEBHOOK GREENN RECEBIDO]:', JSON.stringify(data, null, 2));
 
       // Extrai dados do comprador
-      const buyer = data.buyer || data.client || data.customer || {};
-      const doc = (buyer.doc || buyer.cpf || buyer.document || data.doc || '').replace(/\D/g, '');
-      const phone = (buyer.phone || buyer.cellphone || buyer.whatsapp || data.phone || '').replace(/\D/g, '');
-      const email = (buyer.email || data.email || '').trim().toLowerCase();
-      const name = buyer.name || buyer.nome || data.name || 'Lead Checkout Greenn';
+      const buyer = data.customer || data.buyer || data.client || data.sale?.customer || {};
+      const doc = (buyer.doc || buyer.cpf || buyer.document || data.doc || data.cpf || '').toString().replace(/\D/g, '');
+      const phone = (buyer.phone || buyer.cellphone || buyer.whatsapp || buyer.telefone || data.phone || data.whatsapp || '').toString().replace(/\D/g, '');
+      const email = (buyer.email || data.email || '').toString().trim().toLowerCase();
+      const name = buyer.name || buyer.nome || data.name || data.sale?.customer?.name || 'Lead Checkout Greenn';
 
-      // Identifica status do evento
-      const rawStatus = (data.status || data.event || data.current_status || '').toLowerCase();
-      const amount = data.amount || data.total || data.price || '99.00';
-      const formattedAmount = (typeof amount === 'number' && amount > 500) ? (amount / 100).toFixed(2) : String(amount);
+      // Identifica status do evento (Greenn envia currentStatus: 'paid' ou 'waiting_payment', e event: 'saleUpdated')
+      const currentStatusStr = (data.currentStatus || data.current_status || data.sale?.status || data.order?.status || data.status || '').toString().toLowerCase();
+      const eventStr = (data.event || data.action || '').toString().toLowerCase();
+      const combinedStatus = `${currentStatusStr} ${eventStr}`.trim();
+
+      // Extrai valor pago ou do produto
+      const rawAmount = data.sale?.total || data.sale?.amount || data.amount || data.total || data.price || data.order?.total || '99.00';
+      const numAmount = parseFloat(String(rawAmount).replace(',', '.'));
+      let formattedAmount = '99.00';
+      if (!isNaN(numAmount) && numAmount > 0) {
+        // Se vier em centavos da Greenn (ex: 9900 para R$ 99,00)
+        formattedAmount = numAmount > 500 ? (numAmount / 100).toFixed(2) : numAmount.toFixed(2);
+      }
 
       let finalStatus = 'Iniciou Checkout';
-      if (rawStatus.includes('paid') || rawStatus.includes('approved') || rawStatus.includes('pago') || rawStatus.includes('comprou') || rawStatus.includes('sucesso')) {
+      if (
+        combinedStatus.includes('paid') ||
+        combinedStatus.includes('approved') ||
+        combinedStatus.includes('pago') ||
+        combinedStatus.includes('comprou') ||
+        combinedStatus.includes('sucesso') ||
+        combinedStatus.includes('completed')
+      ) {
         finalStatus = 'Comprou';
-      } else if (rawStatus.includes('waiting') || rawStatus.includes('pend') || rawStatus.includes('pix_gerado') || rawStatus.includes('boleto')) {
-        finalStatus = 'Aguardando Pagamento';
-      } else if (rawStatus.includes('refund') || rawStatus.includes('cancel') || rawStatus.includes('chargeback') || rawStatus.includes('recusad')) {
+      } else if (
+        combinedStatus.includes('refund') ||
+        combinedStatus.includes('cancel') ||
+        combinedStatus.includes('chargeback') ||
+        combinedStatus.includes('recusad') ||
+        combinedStatus.includes('refused') ||
+        combinedStatus.includes('estorn')
+      ) {
         finalStatus = 'Cancelado';
+      } else if (
+        combinedStatus.includes('waiting') ||
+        combinedStatus.includes('pend') ||
+        combinedStatus.includes('pix_gerado') ||
+        combinedStatus.includes('boleto') ||
+        combinedStatus.includes('created') ||
+        combinedStatus.includes('aguardando')
+      ) {
+        finalStatus = 'Aguardando Pagamento';
       } else {
         // 'abandoned_cart', 'carrinho_abandonado', 'checkout_abandonado', etc.
         finalStatus = 'Iniciou Checkout';
       }
 
       // Identifica o funil de origem
-      const funnelId = resolveFunnelId(req.url, data);
+      let funnelId = resolveFunnelId(req.url, data);
       const funnelLabels = {
         prosperus_principal: 'Prosperus Principal (www.prosperusif.com.br)',
         prosperus_funil_02: 'Prosperus Funil 02 (prosperus-02.vercel.app)',
         quiz_prosperus: 'Quiz Prosperus (prosperus-quiz.vercel.app)'
       };
-      const funnelLabel = funnelLabels[funnelId] || funnelId;
 
-      console.log(`🎯 Lead: ${name} | Telefone: ${phone} | Funil: ${funnelId} | Status: ${finalStatus}`);
+      console.log(`🎯 Lead: ${name} | Telefone: ${phone} | CPF: ${doc} | Funil: ${funnelId} | Status: ${finalStatus} | Valor: R$ ${formattedAmount}`);
 
       // 1. Procura se lead já existe no Supabase por Telefone ou Documento
       let existingLead = null;
@@ -169,12 +207,23 @@ module.exports = async (req, res) => {
 
       // 2. Se já existe, atualiza status e valor
       if (existingLead) {
+        // Protege lead que já comprou de ser rebaixado para abandono por evento posterior
+        if (existingLead.status_lead === 'Comprou' && finalStatus === 'Iniciou Checkout') {
+          finalStatus = 'Comprou';
+        }
+
+        // Se o lead veio do Quiz e o webhook não especificou outro funil na URL, preserva a origem Quiz
+        const isFromQuiz = existingLead.funil_id === 'quiz_prosperus' || (existingLead.faixa_renda && !existingLead.faixa_renda.includes('Origem:'));
+        if (isFromQuiz && funnelId === 'prosperus_principal' && !req.url.includes('funil=')) {
+          funnelId = 'quiz_prosperus';
+        }
+
         const updatePayload = {
           status_lead: finalStatus,
           valor_pago: formattedAmount
         };
 
-        // Tenta atualizar incluindo funil_id
+        // Atualiza com funil_id se possível
         const updateRes = await supabaseRequest(
           `/rest/v1/quiz_leads?id=eq.${existingLead.id}`,
           'PATCH',
@@ -182,7 +231,7 @@ module.exports = async (req, res) => {
           { 'Prefer': 'return=minimal' }
         );
 
-        // Se der erro por falta da coluna funil_id, atualiza sem ela
+        // Fallback sem funil_id se a coluna não existir no Supabase
         if (updateRes.status >= 400) {
           await supabaseRequest(
             `/rest/v1/quiz_leads?id=eq.${existingLead.id}`,
@@ -192,9 +241,10 @@ module.exports = async (req, res) => {
           );
         }
 
-        console.log(`✅ Lead #${existingLead.id} atualizado para '${finalStatus}' no funil ${funnelId}`);
+        console.log(`✅ Lead #${existingLead.id} (${name}) atualizado para '${finalStatus}' (R$ ${formattedAmount}) no funil ${funnelId}`);
       } else {
         // 3. Se NÃO existe (lead que foi direto da página de vendas para o checkout da Greenn), CRIA NOVO LEAD!
+        const funnelLabel = funnelLabels[funnelId] || funnelId;
         const newLeadPayload = {
           nome: name,
           email_documento: doc || email || 'Checkout Greenn',
@@ -225,7 +275,7 @@ module.exports = async (req, res) => {
           );
         }
 
-        console.log(`🎉 Novo lead criado no Supabase com sucesso no funil ${funnelId}!`);
+        console.log(`🎉 Novo lead criado no Supabase com sucesso no funil ${funnelId}: ${name} (${finalStatus})`);
       }
 
       return res.status(200).json({
@@ -233,6 +283,7 @@ module.exports = async (req, res) => {
         message: 'Evento Greenn processado com sucesso',
         funil_id: funnelId,
         status_lead: finalStatus,
+        valor_pago: formattedAmount,
         lead: { name, phone, doc, email }
       });
 
